@@ -367,23 +367,23 @@
     </div>
   </div>
 
-  <!-- ================= BARCODE SCANNER MODAL (z-[70] ALWAYS ON TOP) ================= -->
-  <div id="scannerModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4 glass-modal">
+  <!-- ================= BARCODE SCANNER MODAL (HIGH Z-INDEX z-[90]) ================= -->
+  <div id="scannerModal" class="fixed inset-0 z-[90] hidden flex items-center justify-center p-4 glass-modal">
     <div class="glass-panel w-full max-w-md p-5 rounded-3xl border border-slate-700 shadow-2xl relative text-center">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
         <h4 class="text-sm font-bold text-white flex items-center gap-2">
           <i class="fa-solid fa-camera text-amber-400"></i>
-          <span data-i18n="scanner_title">Live Camera Barcode Scanner</span>
+          <span data-i18n="scanner_title">Live Barcode Scanner</span>
         </h4>
         <button onclick="closeScannerModal()" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white">
           <i class="fa-solid fa-xmark"></i>
         </button>
       </div>
 
-      <!-- Video Feed Container -->
+      <!-- Real Video Reader Element -->
       <div id="scanner-reader" class="overflow-hidden rounded-2xl bg-black aspect-square flex items-center justify-center border border-slate-800 relative"></div>
       
-      <p class="text-xs text-amber-400/90 mt-3 font-medium flex items-center justify-center gap-1.5" id="scannerInstruction">
+      <p class="text-xs text-amber-400 mt-3 font-semibold flex items-center justify-center gap-1.5" id="scannerInstruction">
         <i class="fa-solid fa-barcode"></i> 
         <span>Point camera directly at product barcode</span>
       </p>
@@ -466,7 +466,7 @@
         lbl_photo: "Product Image",
         btn_cancel: "Cancel",
         btn_save: "Save Product",
-        scanner_title: "Live Camera Barcode Scanner",
+        scanner_title: "Live Barcode Scanner",
         qa_stock_in: "+ Stock In",
         qa_stock_out: "- Stock Out",
         qa_qty_hint: "Enter quantity:",
@@ -624,9 +624,9 @@
     let scannerMode = "GLOBAL";
     let quickAdjustTargetId = null;
     let currentQAType = 'IN';
-    let isProcessingScan = false; // Scanner lock flag to prevent freezing!
+    let isProcessingScan = false;
 
-    // --- 3. AUDIOPOS BEEP SOUND (TOT! SOUND) ---
+    // --- 3. AUDIOPOS BEEP SOUND ("TOT" SOUND) ---
     function playScanBeep() {
       try {
         const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -635,17 +635,17 @@
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
 
-        // High frequency POS beep (1500Hz)
+        // 1600Hz POS High Beep
         osc.type = "sine";
-        osc.frequency.setValueAtTime(1500, ctx.currentTime);
-        gain.gain.setValueAtTime(0.3, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+        osc.frequency.setValueAtTime(1600, ctx.currentTime);
+        gain.gain.setValueAtTime(0.35, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.09);
 
         osc.connect(gain);
         gain.connect(ctx.destination);
 
         osc.start();
-        osc.stop(ctx.currentTime + 0.1);
+        osc.stop(ctx.currentTime + 0.09);
       } catch (e) {
         console.warn("Audio Context error:", e);
       }
@@ -760,7 +760,7 @@
       const price = parseFloat(item.price) || 0;
       const qty = parseFloat(item.quantity) || 0;
       if (item.unitType === 'WEIGHT') {
-        return price * (qty / 1000); // Price per KG
+        return price * (qty / 1000);
       }
       return price * qty;
     }
@@ -1242,7 +1242,7 @@
       });
     }
 
-    // --- 11. ROBUST BARCODE SCANNER WITH SOUND & INSTANT CLOSE ---
+    // --- 11. 100% BULLETPROOF ZERO-FREEZE BARCODE SCANNER ---
     function openGlobalScanner() {
       scannerMode = "GLOBAL";
       document.getElementById('scannerInstruction').innerHTML = `<i class="fa-solid fa-barcode"></i> <span>Point camera at product to quickly adjust stock</span>`;
@@ -1251,19 +1251,20 @@
 
     function startModalBarcodeScanner() {
       scannerMode = "MODAL_INPUT";
-      document.getElementById('scannerInstruction').innerHTML = `<i class="fa-solid fa-barcode"></i> <span>Scanning directly into product barcode input</span>`;
+      document.getElementById('scannerInstruction').innerHTML = `<i class="fa-solid fa-barcode"></i> <span>Scanning barcode directly into product form</span>`;
       startScanner();
     }
 
     function startScanner() {
-      isProcessingScan = false; // Reset lock
+      isProcessingScan = false;
       document.getElementById('scannerModal').classList.remove('hidden');
 
-      // Clear container if previously filled
-      document.getElementById('scanner-reader').innerHTML = '';
+      // Clear video container cleanly
+      const readerElem = document.getElementById('scanner-reader');
+      readerElem.innerHTML = '';
 
       activeScanner = new Html5Qrcode("scanner-reader");
-      const config = { fps: 15, qrbox: { width: 250, height: 250 } };
+      const config = { fps: 12, qrbox: { width: 250, height: 250 } };
 
       activeScanner.start(
         { facingMode: "environment" },
@@ -1271,40 +1272,64 @@
         onScanSuccess
       ).catch(err => {
         console.error("Camera start error:", err);
-        Swal.fire('Camera Error', err.message || 'Camera permission required or device unavailable', 'error');
+        Swal.fire('Camera Error', 'Could not access device camera. Please check camera permissions.', 'error');
         closeScannerModal();
       });
     }
 
-    async function stopScannerSafely() {
-      if (activeScanner) {
-        try {
-          if (activeScanner.isScanning) {
-            await activeScanner.stop();
-          }
-          await activeScanner.clear();
-        } catch (e) {
-          console.warn("Scanner shutdown error:", e);
-        } finally {
-          activeScanner = null;
-        }
-      }
+    // Instant stop that NEVER hangs UI
+    function stopScannerImmediately() {
+      // 1. Hide modal synchronously (0 ms)
       document.getElementById('scannerModal').classList.add('hidden');
+
+      // 2. Kill hardware media streams instantly
+      try {
+        const video = document.querySelector('#scanner-reader video');
+        if (video && video.srcObject) {
+          const stream = video.srcObject;
+          stream.getTracks().forEach(track => {
+            track.stop();
+          });
+          video.srcObject = null;
+        }
+      } catch (e) {
+        console.warn("Media track kill:", e);
+      }
+
+      // 3. Clean library instance in background without blocking
+      if (activeScanner) {
+        const scannerInstance = activeScanner;
+        activeScanner = null;
+        setTimeout(() => {
+          try {
+            scannerInstance.stop().catch(() => {}).finally(() => {
+              try { scannerInstance.clear(); } catch(e) {}
+              const reader = document.getElementById('scanner-reader');
+              if (reader) reader.innerHTML = '';
+            });
+          } catch(e) {}
+        }, 30);
+      }
     }
 
-    async function onScanSuccess(decodedText) {
-      if (isProcessingScan) return; // Prevent multiple executions!
+    function onScanSuccess(decodedText) {
+      // Prevent multiple scan triggers
+      if (isProcessingScan) return;
       isProcessingScan = true;
 
-      const code = decodedText.trim();
+      const code = (decodedText || '').trim();
+      if (!code) {
+        isProcessingScan = false;
+        return;
+      }
 
-      // 1. Play POS Beep Sound Instantly! ("Tot" sound)
+      // Step 1: Immediate POS beep ("TOT" sound)
       playScanBeep();
 
-      // 2. Shut down scanner and close dialog immediately!
-      await stopScannerSafely();
+      // Step 2: Immediate hardware camera shutdown & modal close
+      stopScannerImmediately();
 
-      // 3. Process Scanned Result
+      // Step 3: Run target action immediately
       if (scannerMode === "MODAL_INPUT") {
         // Scanned from within Add/Edit Item modal
         const barcodeInput = document.getElementById('pBarcode');
@@ -1312,6 +1337,7 @@
           barcodeInput.value = code;
           barcodeInput.dispatchEvent(new Event('input', { bubbles: true }));
         }
+
         Swal.fire({
           toast: true,
           position: 'top-end',
@@ -1321,21 +1347,21 @@
           timer: 1500
         });
       } else {
-        // Global Scan mode: Search in inventory
+        // Global Scan mode: Search product in inventory
         const foundEntry = Object.entries(inventoryData).find(([_, item]) => 
-          item.barcode && item.barcode.trim().toLowerCase() === code.toLowerCase()
+          item && item.barcode && String(item.barcode).trim().toLowerCase() === code.toLowerCase()
         );
 
         if (foundEntry) {
-          // Product found: open quick stock adjustment (+ / -)
+          // Product found! Open Quick Adjust directly
           openQuickAdjust(foundEntry[0], 'IN');
         } else {
-          // Product NOT found: Show friendly alert and option to create!
+          // Product NOT found! Clean alert
           Swal.fire({
-            title: 'পণ্য পাওয়া যায়নি!',
+            title: 'কোনো পণ্য পাওয়া যায়নি!',
             html: `
-              <div class="text-sm">বারকোড: <b class="text-amber-400 font-mono text-base">${code}</b> দিয়ে স্টকে কোনো পণ্য নিবন্ধিত নেই।</div>
-              <p class="text-xs text-slate-400 mt-2.5">আপনি কি এই বারকোড দিয়ে নতুন একটি পণ্য যোগ করতে চান?</p>
+              <div class="text-sm">বারকোড: <b class="text-amber-400 font-mono text-base">${code}</b> দিয়ে স্টকে কোনো পণ্য নেই।</div>
+              <p class="text-xs text-slate-400 mt-2.5">আপনি কি এই বারকোড দিয়ে নতুন পণ্য তৈরি করতে চান?</p>
             `,
             icon: 'info',
             showCancelButton: true,
@@ -1354,7 +1380,7 @@
     }
 
     function closeScannerModal() {
-      stopScannerSafely();
+      stopScannerImmediately();
     }
 
     // --- 12. PDF REPORT GENERATOR WITH VALUATIONS ---
