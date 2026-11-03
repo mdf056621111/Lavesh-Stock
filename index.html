@@ -1,0 +1,1420 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Lavesh Cafe & Bakery - Inventory Pro</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- HTML5 QR/Barcode Scanner -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <!-- jsPDF & AutoTable -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;600;700&family=Hind+Siliguri:wght@400;600;700&display=swap');
+    
+    :root {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    [dir="rtl"] {
+      font-family: 'Noto Sans Arabic', sans-serif;
+    }
+    body {
+      background-color: #080c14;
+      color: #f1f5f9;
+    }
+    .glass-panel {
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .glass-row {
+      background: rgba(18, 26, 47, 0.6);
+      transition: all 0.2s ease;
+    }
+    .glass-row:hover {
+      background: rgba(30, 41, 69, 0.9);
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+    .glass-modal {
+      background: rgba(5, 8, 15, 0.96);
+      backdrop-filter: blur(20px);
+    }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #080c14; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 999px; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-amber-500 selection:text-black">
+
+  <!-- ================= AUTH CONTAINER ================= -->
+  <div id="authContainer" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-950 p-4">
+    <div class="glass-panel w-full max-w-md p-8 rounded-3xl shadow-2xl relative border border-slate-700/80">
+      <div class="text-center mb-6">
+        <div class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-700 text-slate-950 text-3xl shadow-lg shadow-amber-500/20 mb-3 font-bold">
+          <i class="fa-solid fa-mug-hot"></i>
+        </div>
+        <h2 class="text-2xl font-black tracking-tight text-white">Lavesh Cafe & Bakery</h2>
+        <p class="text-xs text-amber-400/90 font-medium mt-1" data-i18n="portal_subtitle">Inventory Management System</p>
+      </div>
+
+      <div class="mb-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-left">
+        <div class="text-[11px] font-bold text-amber-400 flex items-center gap-1.5 mb-1">
+          <i class="fa-solid fa-shield-halved"></i> Cloud Database Authentication:
+        </div>
+        <div class="text-[11px] text-slate-300">
+          Default: <span class="font-mono text-white bg-slate-900 px-1.5 py-0.5 rounded">admin</span> / 
+          <span class="font-mono text-white bg-slate-900 px-1.5 py-0.5 rounded">admin123</span>
+          <span class="block text-[10px] text-slate-400 mt-1 italic">* Firebase Console-এর settings/admin এ গিয়ে যেকোনো সময় পাসওয়ার্ড বদলাতে পারবেন।</span>
+        </div>
+      </div>
+
+      <form onsubmit="handleAuth(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1" data-i18n="lbl_username">Username / Email</label>
+          <div class="relative">
+            <i class="fa-solid fa-user absolute left-4 top-3.5 text-slate-500 text-sm"></i>
+            <input type="text" id="authEmail" required value="admin"
+              class="w-full pl-11 pr-4 py-3 bg-slate-900/90 border border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-500 text-white transition-all" />
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1" data-i18n="lbl_password">Password</label>
+          <div class="relative">
+            <i class="fa-solid fa-lock absolute left-4 top-3.5 text-slate-500 text-sm"></i>
+            <input type="password" id="authPassword" required value="admin123"
+              class="w-full pl-11 pr-4 py-3 bg-slate-900 border border-slate-700 rounded-xl text-sm focus:outline-none focus:border-amber-500 text-white transition-all" />
+          </div>
+        </div>
+
+        <button type="submit"
+          class="w-full py-3.5 mt-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 font-bold rounded-xl text-slate-950 shadow-lg shadow-amber-500/20 transition-all text-sm flex items-center justify-center gap-2">
+          <span data-i18n="btn_login">Sign In</span>
+          <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= APP CONTAINER ================= -->
+  <div id="appContainer" class="hidden flex-1 flex flex-col">
+    <!-- Navbar -->
+    <header class="sticky top-0 z-30 glass-panel border-b border-slate-800/80 px-4 lg:px-8 py-3 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-500 flex items-center justify-center text-slate-950 font-bold text-lg shadow-md shadow-amber-500/20">
+          <i class="fa-solid fa-bread-slice"></i>
+        </div>
+        <div>
+          <h1 class="text-base font-extrabold tracking-tight text-white leading-tight">Lavesh Cafe & Bakery</h1>
+          <p class="text-[11px] text-amber-400 font-semibold flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+            <span data-i18n="nav_online_db">Live Cloud RTDB</span>
+          </p>
+        </div>
+      </div>
+
+      <!-- Action Items & Language Selector -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Language Switcher -->
+        <div class="relative flex items-center bg-slate-900 border border-slate-700 rounded-xl px-2 py-1">
+          <i class="fa-solid fa-globe text-amber-400 text-xs mr-1.5"></i>
+          <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-transparent text-xs text-white focus:outline-none font-semibold cursor-pointer">
+            <option value="en" class="bg-slate-900 text-white">English</option>
+            <option value="ar" class="bg-slate-900 text-white">العربية (Arabic)</option>
+            <option value="bn" class="bg-slate-900 text-white">বাংলা (Bangla)</option>
+          </select>
+        </div>
+
+        <button onclick="downloadFilteredPDF()" title="Download PDF Report" class="px-3 py-2 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 text-xs font-bold flex items-center gap-1.5 transition-all">
+          <i class="fa-solid fa-file-pdf"></i>
+          <span class="hidden md:inline" data-i18n="btn_pdf">Export PDF</span>
+        </button>
+
+        <button onclick="openGlobalScanner()" title="Quick Barcode Scanner" class="px-3 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-400 text-xs font-bold flex items-center gap-1.5 transition-all">
+          <i class="fa-solid fa-barcode"></i>
+          <span class="hidden md:inline" data-i18n="btn_scanner">Scanner</span>
+        </button>
+
+        <button onclick="openProductModal()" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black flex items-center gap-1.5 shadow-lg shadow-amber-500/20 transition-all">
+          <i class="fa-solid fa-plus text-sm"></i>
+          <span data-i18n="btn_add_item">New Item</span>
+        </button>
+
+        <button onclick="logout()" title="Logout" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-rose-600/20 hover:text-rose-400 border border-slate-700 flex items-center justify-center text-slate-400 transition-all">
+          <i class="fa-solid fa-power-off text-xs"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-5">
+
+      <!-- Executive Metric Stats Cards -->
+      <div class="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
+        <div class="glass-panel p-4 rounded-2xl border-l-4 border-l-indigo-500">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] text-slate-400 font-semibold" data-i18n="stat_total_items">Total Items</span>
+            <div class="w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-xs"><i class="fa-solid fa-boxes-stacked"></i></div>
+          </div>
+          <h3 class="text-xl font-black text-white mt-1.5" id="statTotalItems">0</h3>
+        </div>
+
+        <div class="glass-panel p-4 rounded-2xl border-l-4 border-l-emerald-500 col-span-2 sm:col-span-1">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] text-slate-400 font-semibold" data-i18n="stat_total_valuation">Total Stock Value</span>
+            <div class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs"><i class="fa-solid fa-coins"></i></div>
+          </div>
+          <h3 class="text-xl font-black text-emerald-400 mt-1.5" id="statTotalValuation">$0.00</h3>
+        </div>
+
+        <div class="glass-panel p-4 rounded-2xl border-l-4 border-l-amber-500">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] text-slate-400 font-semibold" data-i18n="stat_low_stock">Low Stock (≤5)</span>
+            <div class="w-7 h-7 rounded-lg bg-amber-500/10 text-amber-400 flex items-center justify-center text-xs"><i class="fa-solid fa-triangle-exclamation"></i></div>
+          </div>
+          <h3 class="text-xl font-black text-amber-400 mt-1.5" id="statLowStock">0</h3>
+        </div>
+
+        <div class="glass-panel p-4 rounded-2xl border-l-4 border-l-orange-500">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] text-slate-400 font-semibold" data-i18n="stat_exp_soon">Expiring Soon</span>
+            <div class="w-7 h-7 rounded-lg bg-orange-500/10 text-orange-400 flex items-center justify-center text-xs"><i class="fa-solid fa-clock-rotate-left"></i></div>
+          </div>
+          <h3 class="text-xl font-black text-orange-400 mt-1.5" id="statExpSoon">0</h3>
+        </div>
+
+        <div class="glass-panel p-4 rounded-2xl border-l-4 border-l-rose-500">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] text-slate-400 font-semibold" data-i18n="stat_expired">Expired</span>
+            <div class="w-7 h-7 rounded-lg bg-rose-500/10 text-rose-400 flex items-center justify-center text-xs"><i class="fa-solid fa-ban"></i></div>
+          </div>
+          <h3 class="text-xl font-black text-rose-400 mt-1.5" id="statExpired">0</h3>
+        </div>
+      </div>
+
+      <!-- Controls & Filter Toolbar -->
+      <div class="glass-panel p-3.5 rounded-2xl flex flex-col md:flex-row gap-3 items-center justify-between">
+        <div class="relative w-full md:w-80">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
+          <input type="text" id="searchInput" oninput="renderProducts()" placeholder="Search by name or barcode..."
+            class="w-full pl-10 pr-4 py-2 bg-slate-900/90 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-all" />
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
+          <!-- Month Filter -->
+          <div class="flex items-center gap-1.5 bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5">
+            <span class="text-[11px] text-slate-400" data-i18n="lbl_month">Month:</span>
+            <input type="month" id="filterMonth" onchange="renderProducts()" class="bg-transparent text-xs text-white focus:outline-none cursor-pointer" />
+            <button onclick="clearMonthFilter()" class="text-slate-500 hover:text-white text-xs"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+
+          <select id="filterCategory" onchange="renderProducts()" class="px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
+            <option value="ALL" data-i18n="opt_all_categories">All Categories</option>
+          </select>
+
+          <select id="filterStatus" onchange="renderProducts()" class="px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
+            <option value="ALL" data-i18n="opt_all_status">All Status</option>
+            <option value="LOW" data-i18n="opt_low_stock">Low Stock (≤5)</option>
+            <option value="EXP_SOON" data-i18n="opt_exp_soon">Expiring Soon (≤5 Days)</option>
+            <option value="EXPIRED" data-i18n="opt_expired">Expired Items</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- ================= PROFESSIONAL EXECUTIVE LIST VIEW ================= -->
+      <div class="glass-panel rounded-2xl overflow-hidden border border-slate-800 shadow-xl">
+        <!-- Desktop Header Row -->
+        <div class="hidden md:grid grid-cols-12 gap-3 px-5 py-3.5 bg-slate-900/90 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+          <div class="col-span-4" data-i18n="col_item">Product Details</div>
+          <div class="col-span-2" data-i18n="col_stock">In Stock</div>
+          <div class="col-span-2" data-i18n="col_price">Unit Price / Total Value</div>
+          <div class="col-span-2" data-i18n="col_expiry">Expiry Status</div>
+          <div class="col-span-2 text-right" data-i18n="col_actions">Actions</div>
+        </div>
+
+        <!-- Dynamic List Container -->
+        <div id="productsListContainer" class="divide-y divide-slate-800/60">
+          <!-- Rendered by JavaScript -->
+        </div>
+
+        <!-- Empty State -->
+        <div id="emptyState" class="hidden text-center py-16 px-4">
+          <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-slate-900 flex items-center justify-center text-slate-500 text-2xl border border-slate-800">
+            <i class="fa-solid fa-mug-saucer"></i>
+          </div>
+          <h3 class="text-sm font-bold text-slate-300" data-i18n="empty_title">No inventory products found</h3>
+          <p class="text-xs text-slate-500 mt-1" data-i18n="empty_desc">Click "New Item" above to add your first bakery product</p>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- ================= ADD / EDIT PRODUCT MODAL ================= -->
+  <div id="productModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 glass-modal overflow-y-auto">
+    <div class="glass-panel w-full max-w-xl my-6 p-6 rounded-3xl border border-slate-700/80 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-800">
+        <h3 class="text-base font-bold text-white flex items-center gap-2" id="modalHeading">
+          <i class="fa-solid fa-cake-candles text-amber-400"></i>
+          <span data-i18n="modal_add_title">Add New Product</span>
+        </h3>
+        <button onclick="closeProductModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-all">
+          <i class="fa-solid fa-xmark text-sm"></i>
+        </button>
+      </div>
+
+      <form id="productForm" onsubmit="saveProduct(event)" class="mt-4 space-y-3.5">
+        <input type="hidden" id="editItemId" value="" />
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1" data-i18n="lbl_product_name">Product Name *</label>
+            <input type="text" id="pName" required placeholder="e.g. Chocolate Croissant" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500" />
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">
+              <span data-i18n="lbl_category">Category</span>
+              <span class="text-[10px] text-amber-400 font-normal ml-1">(পূর্বের বা নতুন লিখুন)</span>
+            </label>
+            <!-- Category Datalist: shows existing categories + allows new ones -->
+            <input type="text" id="pCategory" list="existingCategoriesList" placeholder="Select or type category..." class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500" />
+            <datalist id="existingCategoriesList">
+              <!-- Dynamically populated from inventory data -->
+            </datalist>
+          </div>
+        </div>
+
+        <!-- Barcode Field with Scan Button right next to it -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1" data-i18n="lbl_barcode">Barcode / SKU *</label>
+            <div class="flex gap-1.5">
+              <input type="text" id="pBarcode" required placeholder="Scan or type code" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 font-mono" />
+              <button type="button" onclick="startModalBarcodeScanner()" title="Scan with camera" class="px-2.5 py-2 bg-emerald-600/30 hover:bg-emerald-600 border border-emerald-500/40 text-emerald-300 hover:text-white rounded-xl text-xs font-bold flex items-center gap-1 transition-all">
+                <i class="fa-solid fa-camera"></i>
+                <span class="text-[11px]" data-i18n="btn_scan_mini">Scan</span>
+              </button>
+              <button type="button" onclick="generateBarcode()" title="Auto generate" class="px-2.5 py-2 bg-slate-800 hover:bg-slate-700 rounded-xl text-slate-300 text-xs">
+                <i class="fa-solid fa-rotate"></i>
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1" data-i18n="lbl_unit_type">Measurement Unit *</label>
+            <select id="pUnitType" onchange="toggleUnitFields()" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
+              <option value="PIECE">Piece (Pcs)</option>
+              <option value="CARTON">Carton / Box</option>
+              <option value="WEIGHT">Weight (Gram / KG)</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Dynamic Gram/KG Inputs -->
+        <div id="weightFields" class="hidden p-3 rounded-2xl bg-slate-900/60 border border-amber-500/30 space-y-2">
+          <div class="text-[11px] text-amber-400 font-medium flex items-center gap-1.5">
+            <i class="fa-solid fa-scale-balanced"></i> Weight Mode (grams will auto-convert to KG):
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-0.5">Quantity</label>
+              <input type="number" step="any" id="pWeightVal" placeholder="0" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500" />
+            </div>
+            <div>
+              <label class="block text-[10px] text-slate-400 mb-0.5">Unit</label>
+              <select id="pWeightUnit" class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
+                <option value="G">Gram (Grams)</option>
+                <option value="KG">Kilogram (KG)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div id="generalStockField">
+          <label class="block text-xs font-semibold text-slate-300 mb-1" data-i18n="lbl_stock_qty">Current Stock Quantity *</label>
+          <input type="number" id="pQuantity" step="any" placeholder="0" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500" />
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1">
+              <span data-i18n="lbl_unit_price">Unit Price</span>
+              <span class="text-[10px] text-slate-400 font-normal">(Default 0)</span>
+            </label>
+            <div class="relative">
+              <span class="absolute left-3 top-2.5 text-xs text-slate-500">$</span>
+              <input type="number" id="pPrice" step="any" placeholder="0.00" class="w-full pl-7 pr-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 font-mono" />
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-300 mb-1" data-i18n="lbl_expiry">Expiry Date</label>
+            <input type="date" id="pExpiry" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500" />
+          </div>
+        </div>
+
+        <!-- ImgBB Upload Field -->
+        <div>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">
+            <span data-i18n="lbl_photo">Product Image</span>
+            <span class="text-[10px] text-amber-400 font-normal">(ImgBB Cloud)</span>
+          </label>
+          <input type="file" id="pImageInput" accept="image/*" class="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-amber-500 file:text-slate-950 hover:file:bg-amber-400 cursor-pointer" />
+          <div id="imagePreviewContainer" class="mt-2 hidden">
+            <img id="imagePreview" src="" class="w-16 h-16 object-cover rounded-xl border border-slate-700" />
+          </div>
+        </div>
+
+        <div class="flex items-center justify-end gap-2.5 pt-3 border-t border-slate-800">
+          <button type="button" onclick="closeProductModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold" data-i18n="btn_cancel">Cancel</button>
+          <button type="submit" id="saveProductBtn" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow-lg shadow-amber-500/20 flex items-center gap-1.5">
+            <i class="fa-solid fa-floppy-disk"></i>
+            <span data-i18n="btn_save">Save Product</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= BARCODE SCANNER MODAL ================= -->
+  <div id="scannerModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 glass-modal">
+    <div class="glass-panel w-full max-w-md p-5 rounded-3xl border border-slate-700 shadow-2xl relative text-center">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
+        <h4 class="text-sm font-bold text-white flex items-center gap-2">
+          <i class="fa-solid fa-camera text-amber-400"></i>
+          <span data-i18n="scanner_title">Live Camera Barcode Scanner</span>
+        </h4>
+        <button onclick="closeScannerModal()" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div id="scanner-reader" class="overflow-hidden rounded-2xl bg-black aspect-square flex items-center justify-center border border-slate-800"></div>
+      <p class="text-xs text-slate-400 mt-3" id="scannerInstruction">Point camera at product barcode</p>
+    </div>
+  </div>
+
+  <!-- ================= QUICK ADJUSTMENT MODAL (+ / -) WITH PRODUCT IMAGE ================= -->
+  <div id="quickAdjustModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 glass-modal">
+    <div class="glass-panel w-full max-w-sm p-6 rounded-3xl border border-slate-700 shadow-2xl relative text-center">
+      <!-- Item Details with Photo -->
+      <div id="qaItemHeader" class="mb-4">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="flex gap-2 justify-center mb-4">
+        <button id="qaTypeAdd" onclick="setQAType('IN')" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-lg shadow-emerald-600/30" data-i18n="qa_stock_in">
+          + Stock In
+        </button>
+        <button id="qaTypeSub" onclick="setQAType('OUT')" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-slate-800 text-slate-400" data-i18n="qa_stock_out">
+          - Stock Out
+        </button>
+      </div>
+
+      <div class="space-y-3 mb-5">
+        <div id="qaUnitHint" class="text-xs text-slate-400" data-i18n="qa_qty_hint">Enter quantity:</div>
+        <div class="flex items-center gap-2">
+          <input type="number" id="qaAmount" step="any" placeholder="0" class="w-full px-4 py-2.5 text-center text-lg font-black bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-amber-500 font-mono" />
+          <select id="qaWeightUnitSelector" class="hidden px-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white">
+            <option value="G">Gram (G)</option>
+            <option value="KG">Kilogram (KG)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex gap-2">
+        <button onclick="closeQuickAdjust()" class="flex-1 py-2.5 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold" data-i18n="btn_cancel">Cancel</button>
+        <button onclick="applyQuickAdjust()" class="flex-1 py-2.5 rounded-xl bg-amber-500 text-slate-950 text-xs font-black shadow-lg shadow-amber-500/20" data-i18n="btn_update">Update Stock</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT ================= -->
+  <script>
+    // --- 1. I18N MULTI-LANGUAGE TRANSLATION DICTIONARY ---
+    const TRANSLATIONS = {
+      en: {
+        portal_subtitle: "Inventory Management System",
+        lbl_username: "Username / Email",
+        lbl_password: "Password",
+        btn_login: "Sign In",
+        nav_online_db: "Live Cloud RTDB",
+        btn_pdf: "Export PDF",
+        btn_scanner: "Scanner",
+        btn_add_item: "New Item",
+        stat_total_items: "Total Items",
+        stat_total_valuation: "Total Stock Value",
+        stat_low_stock: "Low Stock (≤5)",
+        stat_exp_soon: "Expiring Soon",
+        stat_expired: "Expired",
+        lbl_month: "Month:",
+        opt_all_categories: "All Categories",
+        opt_all_status: "All Status",
+        opt_low_stock: "Low Stock (≤5)",
+        opt_exp_soon: "Expiring Soon (≤5 Days)",
+        opt_expired: "Expired Items",
+        col_item: "Product Details",
+        col_stock: "In Stock",
+        col_price: "Unit Price / Total Value",
+        col_expiry: "Expiry Status",
+        col_actions: "Actions",
+        empty_title: "No inventory products found",
+        empty_desc: "Click 'New Item' above to add your first bakery product",
+        modal_add_title: "Add New Product",
+        modal_edit_title: "Edit Product",
+        lbl_product_name: "Product Name *",
+        lbl_category: "Category",
+        lbl_barcode: "Barcode / SKU *",
+        btn_scan_mini: "Scan",
+        lbl_unit_type: "Measurement Unit *",
+        lbl_stock_qty: "Current Stock Quantity *",
+        lbl_unit_price: "Unit Price",
+        lbl_expiry: "Expiry Date",
+        lbl_photo: "Product Image",
+        btn_cancel: "Cancel",
+        btn_save: "Save Product",
+        scanner_title: "Live Camera Barcode Scanner",
+        qa_stock_in: "+ Stock In",
+        qa_stock_out: "- Stock Out",
+        qa_qty_hint: "Enter quantity:",
+        btn_update: "Update Stock",
+        msg_duplicate_barcode: "Duplicate Barcode Detected!",
+        msg_duplicate_name: "Duplicate Product Name!",
+        toast_updated: "Stock updated successfully",
+        toast_saved: "Product saved successfully"
+      },
+      ar: {
+        portal_subtitle: "نظام إدارة المخزون والمستودع",
+        lbl_username: "اسم المستخدم / البريد",
+        lbl_password: "كلمة المرور",
+        btn_login: "تسجيل الدخول",
+        nav_online_db: "قاعدة بيانات سحابية نشطة",
+        btn_pdf: "تصدير PDF",
+        btn_scanner: "الماسح الضوئي",
+        btn_add_item: "منتج جديد",
+        stat_total_items: "إجمالي المنتجات",
+        stat_total_valuation: "إجمالي قيمة المخزون",
+        stat_low_stock: "مخزون منخفض (≤5)",
+        stat_exp_soon: "يقترب الانتهاء",
+        stat_expired: "منتهي الصلاحية",
+        lbl_month: "الشهر:",
+        opt_all_categories: "جميع الفئات",
+        opt_all_status: "جميع الحالات",
+        opt_low_stock: "مخزون منخفض (≤5)",
+        opt_exp_soon: "يقترب الانتهاء (≤5 أيام)",
+        opt_expired: "منتجات منتهية",
+        col_item: "تفاصيل المنتج",
+        col_stock: "المخزون المتوفر",
+        col_price: "سعر الوحدة / القيمة الإجمالية",
+        col_expiry: "حالة الصلاحية",
+        col_actions: "الإجراءات",
+        empty_title: "لم يتم العثور على أي منتجات",
+        empty_desc: "اضغط على 'منتج جديد' لإضافة أول منتج للمخبز",
+        modal_add_title: "إضافة منتج جديد",
+        modal_edit_title: "تعديل المنتج",
+        lbl_product_name: "اسم المنتج *",
+        lbl_category: "الفئة",
+        lbl_barcode: "الباركود / الرمز *",
+        btn_scan_mini: "مسح",
+        lbl_unit_type: "وحدة القياس *",
+        lbl_stock_qty: "كمية المخزون *",
+        lbl_unit_price: "سعر الوحدة",
+        lbl_expiry: "تاريخ الانتهاء",
+        lbl_photo: "صورة المنتج",
+        btn_cancel: "إلغاء",
+        btn_save: "حفظ المنتج",
+        scanner_title: "ماسح الباركود المباشر",
+        qa_stock_in: "+ إضافة للمخزون",
+        qa_stock_out: "- سحب من المخزون",
+        qa_qty_hint: "أدخل الكمية:",
+        btn_update: "تحديث المخزون",
+        msg_duplicate_barcode: "تم اكتشاف باركود مكرر!",
+        msg_duplicate_name: "اسم المنتج موجود بالفعل!",
+        toast_updated: "تم تحديث المخزون بنجاح",
+        toast_saved: "تم حفظ المنتج بنجاح"
+      },
+      bn: {
+        portal_subtitle: "স্মার্ট স্টক ও ইনভেন্টরি ম্যানেজমেন্ট",
+        lbl_username: "ইউজারনেম / ইমেইল",
+        lbl_password: "পাসওয়ার্ড",
+        btn_login: "প্রবেশ করুন",
+        nav_online_db: "লাইভ ক্লাউড আরটিডিবি",
+        btn_pdf: "পিডিএফ রিপোর্ট",
+        btn_scanner: "স্ক্যানার",
+        btn_add_item: "নতুন আইটেম",
+        stat_total_items: "মোট পণ্য",
+        stat_total_valuation: "মোট স্টক মূল্য",
+        stat_low_stock: "লো স্টক (≤৫)",
+        stat_exp_soon: "মেয়াদ সন্নিকটে",
+        stat_expired: "মেয়াদোত্তীর্ণ",
+        lbl_month: "মাস:",
+        opt_all_categories: "সব ক্যাটাগরি",
+        opt_all_status: "সকল স্ট্যাটাস",
+        opt_low_stock: "লো স্টক (≤৫)",
+        opt_exp_soon: "মেয়াদ সন্নিকটে (≤৫ দিন)",
+        opt_expired: "মেয়াদোত্তীর্ণ পণ্য",
+        col_item: "পণ্যের বিবরণ",
+        col_stock: "বর্তমান স্টক",
+        col_price: "ইউনিট মূল্য / মোট ভ্যালু",
+        col_expiry: "মেয়াদ স্থিতি",
+        col_actions: "অ্যাকশন",
+        empty_title: "কোনো পণ্য পাওয়া যায়নি",
+        empty_desc: "নতুন পণ্য যোগ করতে উপরের 'নতুন আইটেম' বাটনে ক্লিক করুন",
+        modal_add_title: "নতুন পণ্য যোগ করুন",
+        modal_edit_title: "পণ্য আপডেট করুন",
+        lbl_product_name: "পণ্যের নাম *",
+        lbl_category: "ক্যাটাগরি",
+        lbl_barcode: "বারকোড / কোড *",
+        btn_scan_mini: "স্ক্যান",
+        lbl_unit_type: "পরিমাপের একক *",
+        lbl_stock_qty: "স্টকের পরিমাণ *",
+        lbl_unit_price: "ইউনিট মূল্য",
+        lbl_expiry: "মেয়াদ উত্তীর্ণের তারিখ",
+        lbl_photo: "পণ্যের ছবি",
+        btn_cancel: "বাতিল",
+        btn_save: "সংরক্ষণ করুন",
+        scanner_title: "ক্যামেরা বারকোড স্ক্যানার",
+        qa_stock_in: "+ স্টক ইন (যোগ)",
+        qa_stock_out: "- স্টক আউট (কমান)",
+        qa_qty_hint: "পরিমাণ লিখুন:",
+        btn_update: "স্টক আপডেট করুন",
+        msg_duplicate_barcode: "ডুপ্লিকেট বারকোড পাওয়া গেছে!",
+        msg_duplicate_name: "ডুপ্লিকেট পণ্যের নাম!",
+        toast_updated: "স্টক সফলভাবে আপডেট হয়েছে",
+        toast_saved: "পণ্য সফলভাবে সংরক্ষিত হয়েছে"
+      }
+    };
+
+    let currentLang = localStorage.getItem("lavesh_lang") || "en";
+
+    function changeLanguage(lang) {
+      currentLang = lang;
+      localStorage.setItem("lavesh_lang", lang);
+      document.getElementById('langSelect').value = lang;
+
+      if (lang === 'ar') {
+        document.documentElement.setAttribute('dir', 'rtl');
+      } else {
+        document.documentElement.setAttribute('dir', 'ltr');
+      }
+
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (TRANSLATIONS[lang] && TRANSLATIONS[lang][key]) {
+          el.innerText = TRANSLATIONS[lang][key];
+        }
+      });
+
+      renderProducts();
+    }
+
+    // --- 2. CONFIGURATIONS ---
+    const IMGBB_API_KEY = "f63b014000f9e158260392d4e428ee63";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyAGE9KelIe0KxGyw0P-cDhE5IRX0mfPDQA",
+      authDomain: "print-20478.firebaseapp.com",
+      databaseURL: "https://print-20478-default-rtdb.firebaseio.com",
+      projectId: "print-20478",
+      storageBucket: "print-20478.firebasestorage.app",
+      messagingSenderId: "137415269019",
+      appId: "1:137415269019:android:7add3f447a4443cc94c43e"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // App State
+    let currentUser = null;
+    let inventoryData = {};
+    let activeScanner = null;
+    let scannerMode = "GLOBAL";
+    let quickAdjustTargetId = null;
+    let currentQAType = 'IN';
+
+    // --- 3. AUTHENTICATION (SECURED VIA FIREBASE REALTIME DATABASE) ---
+    // The admin password is read strictly from Firebase RTDB (node: settings/admin).
+    // Can only be changed by logging into Firebase Console directly!
+    window.addEventListener('DOMContentLoaded', () => {
+      changeLanguage(currentLang);
+
+      const savedSession = localStorage.getItem("lavesh_cafe_session");
+      if (savedSession) {
+        currentUser = JSON.parse(savedSession);
+        initDashboard();
+      }
+    });
+
+    async function handleAuth(e) {
+      e.preventDefault();
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPassword').value.trim();
+
+      try {
+        Swal.fire({ title: 'Verifying Security...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+
+        // Fetch the secure admin settings from Firebase Realtime Database
+        const adminSnap = await db.ref('settings/admin').once('value');
+        let adminConfig = adminSnap.val();
+
+        // If not initialized yet in RTDB, seed default credentials
+        if (!adminConfig) {
+          adminConfig = { username: "admin", password: "admin123" };
+          await db.ref('settings/admin').set(adminConfig);
+        }
+
+        // Check credentials against Firebase RTDB settings
+        const validUser = (email === adminConfig.username || email === "admin@stock.com" || email === "admin");
+        const validPass = (password === adminConfig.password);
+
+        if (validUser && validPass) {
+          currentUser = { email: "admin@stock.com", name: adminConfig.username || "Master Admin" };
+          localStorage.setItem("lavesh_cafe_session", JSON.stringify(currentUser));
+          initDashboard();
+          Swal.fire({
+            icon: 'success',
+            title: 'Welcome to Lavesh Cafe & Bakery',
+            showConfirmButton: false,
+            timer: 1500
+          });
+        } else {
+          Swal.fire({
+            title: 'Access Denied',
+            html: '<p class="text-sm">Invalid username or password.</p><p class="text-xs text-slate-400 mt-2">Password must match Firebase Realtime Database settings.</p>',
+            icon: 'error'
+          });
+        }
+      } catch (err) {
+        Swal.fire('Database Error', 'Could not verify admin credentials: ' + err.message, 'error');
+      }
+    }
+
+    function initDashboard() {
+      document.getElementById('authContainer').classList.add('hidden');
+      document.getElementById('appContainer').classList.remove('hidden');
+      listenToDatabase();
+    }
+
+    function logout() {
+      Swal.fire({
+        title: 'Logout confirmation',
+        text: 'Are you sure you want to sign out?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e11d48',
+        cancelButtonColor: '#334155',
+        confirmButtonText: 'Logout'
+      }).then(res => {
+        if (res.isConfirmed) {
+          localStorage.removeItem("lavesh_cafe_session");
+          currentUser = null;
+          document.getElementById('appContainer').classList.add('hidden');
+          document.getElementById('authContainer').classList.remove('hidden');
+        }
+      });
+    }
+
+    // --- 4. REALTIME DATABASE SYNC ---
+    function listenToDatabase() {
+      db.ref('inventory').on('value', snapshot => {
+        inventoryData = snapshot.val() || {};
+        updateCategoryOptions();
+        renderProducts();
+      });
+    }
+
+    // --- 5. IMGBB IMAGE UPLOADER ---
+    async function uploadToImgBB(file) {
+      const formData = new FormData();
+      formData.append("image", file);
+
+      const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+        method: "POST",
+        body: formData
+      });
+
+      const resData = await response.json();
+      if (resData.success) {
+        return resData.data.url;
+      } else {
+        throw new Error(resData.error?.message || "ImgBB upload error");
+      }
+    }
+
+    // --- 6. VALUATION & QUANTITY HELPERS ---
+    function calculateTotalItemValue(item) {
+      const price = parseFloat(item.price) || 0; // Default 0
+      const qty = parseFloat(item.quantity) || 0;
+
+      if (item.unitType === 'WEIGHT') {
+        return price * (qty / 1000); // Price per KG
+      }
+      return price * qty;
+    }
+
+    function formatStockQuantity(item) {
+      if (item.unitType === 'WEIGHT') {
+        const grams = Number(item.quantity) || 0;
+        if (grams >= 1000) {
+          const kg = (grams / 1000).toFixed(2);
+          return `${kg} KG (${grams} g)`;
+        }
+        return `${grams} g`;
+      } else if (item.unitType === 'CARTON') {
+        return `${item.quantity} Carton`;
+      }
+      return `${item.quantity} Pcs`;
+    }
+
+    function toggleUnitFields() {
+      const type = document.getElementById('pUnitType').value;
+      const weightFields = document.getElementById('weightFields');
+      const generalField = document.getElementById('generalStockField');
+
+      if (type === 'WEIGHT') {
+        weightFields.classList.remove('hidden');
+        generalField.classList.add('hidden');
+      } else {
+        weightFields.classList.add('hidden');
+        generalField.classList.remove('hidden');
+      }
+    }
+
+    function generateBarcode() {
+      document.getElementById('pBarcode').value = 'LV-' + Math.floor(10000000 + Math.random() * 90000000);
+    }
+
+    function getExpiryStatus(expiryDateStr) {
+      if (!expiryDateStr) return { status: 'NORMAL', text: 'No Expiry', badgeClass: 'bg-slate-800 text-slate-400 border border-slate-700' };
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const expDate = new Date(expiryDateStr);
+      expDate.setHours(0, 0, 0, 0);
+
+      const diffDays = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
+
+      if (diffDays < 0) {
+        return { status: 'EXPIRED', text: `Expired (${Math.abs(diffDays)}d ago)`, badgeClass: 'bg-rose-500/10 text-rose-400 border border-rose-500/30' };
+      } else if (diffDays <= 5) {
+        return { status: 'EXP_SOON', text: `Expiring (${diffDays === 0 ? 'Today' : diffDays + 'd left'})`, badgeClass: 'bg-orange-500/10 text-orange-400 border border-orange-500/30' };
+      }
+      return { status: 'GOOD', text: `${diffDays} days left`, badgeClass: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' };
+    }
+
+    function clearMonthFilter() {
+      document.getElementById('filterMonth').value = '';
+      renderProducts();
+    }
+
+    // --- 7. AUTO-POPULATE CATEGORY LIST & FILTERS ---
+    function updateCategoryOptions() {
+      const filterSelect = document.getElementById('filterCategory');
+      const datalist = document.getElementById('existingCategoriesList');
+      const cats = new Set();
+
+      Object.values(inventoryData).forEach(item => {
+        if (item.category && item.category.trim() !== '') {
+          cats.add(item.category.trim());
+        }
+      });
+
+      // Update Filter Select
+      const currentVal = filterSelect.value;
+      filterSelect.innerHTML = `<option value="ALL">${TRANSLATIONS[currentLang].opt_all_categories}</option>`;
+      cats.forEach(c => {
+        filterSelect.innerHTML += `<option value="${c}">${c}</option>`;
+      });
+      filterSelect.value = currentVal;
+
+      // Update Add/Edit Modal Datalist (Shows existing categories!)
+      datalist.innerHTML = '';
+      cats.forEach(c => {
+        datalist.innerHTML += `<option value="${c}">`;
+      });
+    }
+
+    function getFilteredItems() {
+      const search = document.getElementById('searchInput').value.toLowerCase().trim();
+      const filterCat = document.getElementById('filterCategory').value;
+      const filterStatus = document.getElementById('filterStatus').value;
+      const filterMonth = document.getElementById('filterMonth').value;
+
+      const list = [];
+
+      Object.entries(inventoryData).forEach(([key, item]) => {
+        const expInfo = getExpiryStatus(item.expiryDate);
+        const currentQty = Number(item.quantity) || 0;
+
+        let matchesSearch = item.name.toLowerCase().includes(search) || (item.barcode && item.barcode.toLowerCase().includes(search));
+        let matchesCat = filterCat === 'ALL' || item.category === filterCat;
+        let matchesStatus = true;
+
+        if (filterStatus === 'LOW') matchesStatus = (currentQty <= 5);
+        if (filterStatus === 'EXP_SOON') matchesStatus = (expInfo.status === 'EXP_SOON');
+        if (filterStatus === 'EXPIRED') matchesStatus = (expInfo.status === 'EXPIRED');
+
+        let matchesMonth = true;
+        if (filterMonth) {
+          if (item.expiryDate && item.expiryDate.startsWith(filterMonth)) {
+            matchesMonth = true;
+          } else if (item.createdAt && new Date(item.createdAt).toISOString().startsWith(filterMonth)) {
+            matchesMonth = true;
+          } else {
+            matchesMonth = false;
+          }
+        }
+
+        if (matchesSearch && matchesCat && matchesStatus && matchesMonth) {
+          list.push({ key, ...item, expInfo });
+        }
+      });
+
+      return list;
+    }
+
+    function renderProducts() {
+      const container = document.getElementById('productsListContainer');
+      const emptyState = document.getElementById('emptyState');
+      container.innerHTML = '';
+
+      let totalItems = 0;
+      let totalStockValuation = 0;
+      let lowStockCount = 0;
+      let expSoonCount = 0;
+      let expiredCount = 0;
+
+      Object.values(inventoryData).forEach(item => {
+        totalItems++;
+        totalStockValuation += calculateTotalItemValue(item);
+        const exp = getExpiryStatus(item.expiryDate);
+        if (exp.status === 'EXPIRED') expiredCount++;
+        if (exp.status === 'EXP_SOON') expSoonCount++;
+        if (Number(item.quantity || 0) <= 5) lowStockCount++;
+      });
+
+      document.getElementById('statTotalItems').innerText = totalItems;
+      document.getElementById('statTotalValuation').innerText = `$${totalStockValuation.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById('statLowStock').innerText = lowStockCount;
+      document.getElementById('statExpSoon').innerText = expSoonCount;
+      document.getElementById('statExpired').innerText = expiredCount;
+
+      const filteredList = getFilteredItems();
+
+      filteredList.forEach(item => {
+        const row = document.createElement('div');
+        row.className = "glass-row px-4 py-3.5 flex flex-col md:grid md:grid-cols-12 md:items-center gap-3 border-b border-slate-800/60";
+
+        const currentQty = Number(item.quantity) || 0;
+        const unitPrice = parseFloat(item.price) || 0;
+        const totalVal = calculateTotalItemValue(item);
+
+        row.innerHTML = `
+          <!-- 1. Product Details (Col 4) -->
+          <div class="md:col-span-4 flex items-center gap-3">
+            <div class="w-12 h-12 rounded-xl bg-slate-900 overflow-hidden flex-shrink-0 border border-slate-800 relative">
+              <img src="${item.imageUrl || 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=150&q=80'}" 
+                   class="w-full h-full object-cover" />
+            </div>
+            <div class="min-w-0">
+              <h4 class="font-bold text-white text-sm truncate leading-tight">${item.name}</h4>
+              <div class="flex items-center gap-1.5 mt-1">
+                <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-amber-300">
+                  ${item.barcode || 'NO-SKU'}
+                </span>
+                <span class="text-[10px] uppercase font-semibold px-1.5 py-0.5 rounded bg-slate-800 text-slate-300">
+                  ${item.category || 'Bakery'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. In Stock (Col 2) -->
+          <div class="md:col-span-2 flex items-center justify-between md:justify-start">
+            <span class="text-[11px] text-slate-400 md:hidden font-semibold">${TRANSLATIONS[currentLang].col_stock}:</span>
+            <div>
+              <span class="text-sm font-black ${currentQty <= 5 ? 'text-amber-400' : 'text-emerald-400'}">
+                ${formatStockQuantity(item)}
+              </span>
+              <span class="block text-[10px] text-slate-500 uppercase">${item.unitType}</span>
+            </div>
+          </div>
+
+          <!-- 3. Pricing & Valuation (Col 2) -->
+          <div class="md:col-span-2 flex items-center justify-between md:justify-start">
+            <span class="text-[11px] text-slate-400 md:hidden font-semibold">${TRANSLATIONS[currentLang].col_price}:</span>
+            <div>
+              <div class="text-xs font-bold text-white font-mono">
+                Total: <span class="text-emerald-400">$${totalVal.toFixed(2)}</span>
+              </div>
+              <div class="text-[10px] text-slate-400 font-mono">
+                Unit: $${unitPrice.toFixed(2)} ${item.unitType === 'WEIGHT' ? '/kg' : ''}
+              </div>
+            </div>
+          </div>
+
+          <!-- 4. Expiry Status (Col 2) -->
+          <div class="md:col-span-2 flex items-center justify-between md:justify-start">
+            <span class="text-[11px] text-slate-400 md:hidden font-semibold">${TRANSLATIONS[currentLang].col_expiry}:</span>
+            <div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full inline-block ${item.expInfo.badgeClass}">
+                ${item.expInfo.text}
+              </span>
+              ${item.expiryDate ? `<span class="block text-[10px] text-slate-500 font-mono mt-0.5">${item.expiryDate}</span>` : ''}
+            </div>
+          </div>
+
+          <!-- 5. Actions (Col 2) -->
+          <div class="md:col-span-2 flex items-center justify-end gap-1.5 pt-2 md:pt-0 border-t md:border-t-0 border-slate-800/80">
+            <button onclick="openQuickAdjust('${item.key}', 'IN')" title="Stock In (+)" class="w-8 h-8 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white flex items-center justify-center text-xs font-bold transition-all">
+              <i class="fa-solid fa-plus"></i>
+            </button>
+            <button onclick="openQuickAdjust('${item.key}', 'OUT')" title="Stock Out (-)" class="w-8 h-8 rounded-xl bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white flex items-center justify-center text-xs font-bold transition-all">
+              <i class="fa-solid fa-minus"></i>
+            </button>
+            <button onclick="editProduct('${item.key}')" title="Edit Item" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-400 flex items-center justify-center text-xs transition-all">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+            <button onclick="deleteProduct('${item.key}')" title="Delete Item" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-rose-600 hover:text-white text-slate-400 flex items-center justify-center text-xs transition-all">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+
+      emptyState.classList.toggle('hidden', filteredList.length > 0);
+    }
+
+    // --- 8. PRODUCT MODAL HANDLERS ---
+    function openProductModal() {
+      document.getElementById('productForm').reset();
+      document.getElementById('editItemId').value = '';
+      document.getElementById('modalHeading').innerHTML = `<i class="fa-solid fa-cake-candles text-amber-400"></i> ${TRANSLATIONS[currentLang].modal_add_title}`;
+      document.getElementById('imagePreviewContainer').classList.add('hidden');
+      document.getElementById('pUnitType').value = 'PIECE';
+      document.getElementById('pPrice').value = '0'; // default 0
+      toggleUnitFields();
+      generateBarcode();
+      document.getElementById('productModal').classList.remove('hidden');
+    }
+
+    function closeProductModal() {
+      document.getElementById('productModal').classList.add('hidden');
+    }
+
+    function editProduct(key) {
+      const item = inventoryData[key];
+      if (!item) return;
+
+      document.getElementById('editItemId').value = key;
+      document.getElementById('modalHeading').innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-400"></i> ${TRANSLATIONS[currentLang].modal_edit_title}`;
+      document.getElementById('pName').value = item.name || '';
+      document.getElementById('pCategory').value = item.category || '';
+      document.getElementById('pBarcode').value = item.barcode || '';
+      document.getElementById('pUnitType').value = item.unitType || 'PIECE';
+      document.getElementById('pPrice').value = item.price !== undefined ? item.price : 0;
+      document.getElementById('pExpiry').value = item.expiryDate || '';
+
+      toggleUnitFields();
+      if (item.unitType === 'WEIGHT') {
+        const grams = Number(item.quantity) || 0;
+        if (grams >= 1000 && grams % 1000 === 0) {
+          document.getElementById('pWeightVal').value = grams / 1000;
+          document.getElementById('pWeightUnit').value = 'KG';
+        } else {
+          document.getElementById('pWeightVal').value = grams;
+          document.getElementById('pWeightUnit').value = 'G';
+        }
+      } else {
+        document.getElementById('pQuantity').value = item.quantity || 0;
+      }
+
+      if (item.imageUrl) {
+        document.getElementById('imagePreview').src = item.imageUrl;
+        document.getElementById('imagePreviewContainer').classList.remove('hidden');
+      } else {
+        document.getElementById('imagePreviewContainer').classList.add('hidden');
+      }
+
+      document.getElementById('productModal').classList.remove('hidden');
+    }
+
+    async function saveProduct(e) {
+      e.preventDefault();
+      const id = document.getElementById('editItemId').value;
+      const name = document.getElementById('pName').value.trim();
+      const category = document.getElementById('pCategory').value.trim() || 'General';
+      const barcode = document.getElementById('pBarcode').value.trim();
+      const unitType = document.getElementById('pUnitType').value;
+      const price = parseFloat(document.getElementById('pPrice').value) || 0;
+      const expiryDate = document.getElementById('pExpiry').value;
+      const imageFile = document.getElementById('pImageInput').files[0];
+
+      // DUPLICATE VALIDATION
+      const normBarcode = barcode.toLowerCase();
+      const normName = name.toLowerCase();
+
+      for (const [key, item] of Object.entries(inventoryData)) {
+        if (id && key === id) continue;
+
+        if (item.barcode && item.barcode.toLowerCase() === normBarcode) {
+          Swal.fire({
+            title: TRANSLATIONS[currentLang].msg_duplicate_barcode,
+            html: `Barcode <b>"${barcode}"</b> is already assigned to <b>"${item.name}"</b>.`,
+            icon: 'warning'
+          });
+          return;
+        }
+
+        if (item.name && item.name.toLowerCase() === normName) {
+          Swal.fire({
+            title: TRANSLATIONS[currentLang].msg_duplicate_name,
+            html: `Product <b>"${item.name}"</b> already exists. Please update its stock or rename.`,
+            icon: 'warning'
+          });
+          return;
+        }
+      }
+
+      let finalQuantity = 0;
+      if (unitType === 'WEIGHT') {
+        const weightInput = parseFloat(document.getElementById('pWeightVal').value) || 0;
+        const weightUnit = document.getElementById('pWeightUnit').value;
+        finalQuantity = weightUnit === 'KG' ? weightInput * 1000 : weightInput;
+      } else {
+        finalQuantity = parseFloat(document.getElementById('pQuantity').value) || 0;
+      }
+
+      try {
+        Swal.fire({
+          title: 'Saving...',
+          html: '<span class="text-xs text-slate-400">Uploading to ImgBB and syncing with RTDB...</span>',
+          didOpen: () => Swal.showLoading(),
+          allowOutsideClick: false
+        });
+
+        let imageUrl = id && inventoryData[id] ? inventoryData[id].imageUrl : '';
+
+        if (imageFile) {
+          imageUrl = await uploadToImgBB(imageFile);
+        }
+
+        const productPayload = {
+          name,
+          category,
+          barcode,
+          unitType,
+          quantity: finalQuantity,
+          price,
+          expiryDate,
+          imageUrl,
+          updatedAt: firebase.database.ServerValue.TIMESTAMP
+        };
+
+        if (id) {
+          await db.ref('inventory/' + id).update(productPayload);
+        } else {
+          productPayload.createdAt = firebase.database.ServerValue.TIMESTAMP;
+          await db.ref('inventory').push(productPayload);
+        }
+
+        closeProductModal();
+        Swal.fire({
+          icon: 'success',
+          title: TRANSLATIONS[currentLang].toast_saved,
+          timer: 1500,
+          showConfirmButton: false
+        });
+      } catch (err) {
+        Swal.fire('Error', err.message, 'error');
+      }
+    }
+
+    function deleteProduct(key) {
+      Swal.fire({
+        title: 'Delete Product',
+        text: 'Are you sure you want to permanently delete this item?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#e11d48',
+        cancelButtonColor: '#334155',
+        confirmButtonText: 'Delete'
+      }).then(async res => {
+        if (res.isConfirmed) {
+          await db.ref('inventory/' + key).remove();
+        }
+      });
+    }
+
+    // --- 9. QUICK ADJUSTMENT (+ / -) WITH ITEM PHOTO PREVIEW ---
+    function openQuickAdjust(key, type = 'IN') {
+      const item = inventoryData[key];
+      if (!item) return;
+
+      quickAdjustTargetId = key;
+      setQAType(type);
+
+      const header = document.getElementById('qaItemHeader');
+      header.innerHTML = `
+        <div class="flex items-center gap-3 text-left p-3 rounded-2xl bg-slate-900 border border-slate-800">
+          <div class="w-14 h-14 rounded-xl bg-slate-950 overflow-hidden flex-shrink-0 border border-slate-700 relative">
+            <img src="${item.imageUrl || 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=150&q=80'}" class="w-full h-full object-cover" />
+          </div>
+          <div class="min-w-0 flex-1">
+            <h4 class="font-bold text-white text-sm truncate leading-tight">${item.name}</h4>
+            <div class="text-[11px] font-mono text-amber-400 mt-0.5">${item.barcode || 'NO-SKU'}</div>
+            <div class="text-xs text-slate-400 mt-1">Current Stock: <span class="font-black text-emerald-400">${formatStockQuantity(item)}</span></div>
+          </div>
+        </div>
+      `;
+
+      const weightSelector = document.getElementById('qaWeightUnitSelector');
+      if (item.unitType === 'WEIGHT') {
+        weightSelector.classList.remove('hidden');
+        document.getElementById('qaUnitHint').innerText = 'Enter weight (G or KG):';
+      } else {
+        weightSelector.classList.add('hidden');
+        document.getElementById('qaUnitHint').innerText = `${item.unitType === 'CARTON' ? 'Carton' : 'Piece'} count:`;
+      }
+
+      document.getElementById('qaAmount').value = '';
+      document.getElementById('quickAdjustModal').classList.remove('hidden');
+    }
+
+    function setQAType(type) {
+      currentQAType = type;
+      const addBtn = document.getElementById('qaTypeAdd');
+      const subBtn = document.getElementById('qaTypeSub');
+
+      if (type === 'IN') {
+        addBtn.className = "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-lg shadow-emerald-600/30";
+        subBtn.className = "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-slate-800 text-slate-400";
+      } else {
+        subBtn.className = "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-rose-600 text-white shadow-lg shadow-rose-600/30";
+        addBtn.className = "flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-slate-800 text-slate-400";
+      }
+    }
+
+    function closeQuickAdjust() {
+      document.getElementById('quickAdjustModal').classList.add('hidden');
+    }
+
+    async function applyQuickAdjust() {
+      const amountInput = parseFloat(document.getElementById('qaAmount').value);
+      if (!amountInput || amountInput <= 0) return;
+
+      const item = inventoryData[quickAdjustTargetId];
+      if (!item) return;
+
+      let delta = amountInput;
+      if (item.unitType === 'WEIGHT') {
+        const u = document.getElementById('qaWeightUnitSelector').value;
+        delta = u === 'KG' ? amountInput * 1000 : amountInput;
+      }
+
+      let currentQty = Number(item.quantity) || 0;
+      let newQty = currentQAType === 'IN' ? currentQty + delta : currentQty - delta;
+
+      if (newQty < 0) {
+        Swal.fire('Stock Shortage', 'Cannot deduct more than available in stock!', 'error');
+        return;
+      }
+
+      await db.ref(`inventory/${quickAdjustTargetId}`).update({
+        quantity: newQty,
+        updatedAt: firebase.database.ServerValue.TIMESTAMP
+      });
+
+      closeQuickAdjust();
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: TRANSLATIONS[currentLang].toast_updated,
+        showConfirmButton: false,
+        timer: 1600
+      });
+    }
+
+    // --- 10. SMART SCANNER SYSTEM ---
+    function openGlobalScanner() {
+      scannerMode = "GLOBAL";
+      document.getElementById('scannerInstruction').innerText = "Point camera at product to quickly adjust stock";
+      startScanner();
+    }
+
+    function startModalBarcodeScanner() {
+      scannerMode = "MODAL_INPUT";
+      document.getElementById('scannerInstruction').innerText = "Scanning barcode directly into the input field";
+      startScanner();
+    }
+
+    function startScanner() {
+      document.getElementById('scannerModal').classList.remove('hidden');
+      activeScanner = new Html5Qrcode("scanner-reader");
+      
+      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
+      activeScanner.start({ facingMode: "environment" }, config, onScanSuccess)
+        .catch(err => {
+          Swal.fire('Camera Error', err.message || 'Camera permission required', 'error');
+          closeScannerModal();
+        });
+    }
+
+    function onScanSuccess(decodedText) {
+      if (activeScanner) {
+        activeScanner.stop().then(() => {
+          closeScannerModal();
+
+          if (scannerMode === "MODAL_INPUT") {
+            document.getElementById('pBarcode').value = decodedText;
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'success',
+              title: `Scanned: ${decodedText}`,
+              showConfirmButton: false,
+              timer: 1500
+            });
+          } else {
+            const foundEntry = Object.entries(inventoryData).find(([_, item]) => item.barcode === decodedText);
+            if (foundEntry) {
+              openQuickAdjust(foundEntry[0], 'IN');
+            } else {
+              Swal.fire({
+                title: 'New Barcode Scanned',
+                text: `Code: ${decodedText}. Would you like to create a new product with this barcode?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, Create',
+                cancelButtonText: 'No'
+              }).then(res => {
+                if (res.isConfirmed) {
+                  openProductModal();
+                  document.getElementById('pBarcode').value = decodedText;
+                }
+              });
+            }
+          }
+        });
+      }
+    }
+
+    function closeScannerModal() {
+      if (activeScanner) {
+        activeScanner.stop().then(() => activeScanner.clear()).catch(() => {});
+        activeScanner = null;
+      }
+      document.getElementById('scannerModal').classList.add('hidden');
+    }
+
+    // --- 11. PDF REPORT GENERATOR WITH VALUATIONS ---
+    function downloadFilteredPDF() {
+      const filteredList = getFilteredItems();
+
+      if (filteredList.length === 0) {
+        Swal.fire('No Data', 'No products to export in current filter.', 'info');
+        return;
+      }
+
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+
+      const monthVal = document.getElementById('filterMonth').value;
+      const monthTitle = monthVal ? `Month Filter: ${monthVal}` : 'Full Inventory Valuation Report';
+
+      doc.setFillColor(15, 23, 42);
+      doc.rect(0, 0, 210, 35, 'F');
+
+      doc.setTextColor(245, 158, 11);
+      doc.setFontSize(18);
+      doc.setFont('helvetica', 'bold');
+      doc.text("LAVESH CAFE & BAKERY", 14, 15);
+
+      doc.setTextColor(255, 255, 255);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'normal');
+      doc.text(`Official Inventory & Stock Valuation Report | ${monthTitle}`, 14, 23);
+
+      doc.setTextColor(148, 163, 184);
+      doc.setFontSize(8);
+      doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 29);
+
+      let grandTotalValue = 0;
+
+      const tableData = filteredList.map((item, index) => {
+        const qtyStr = formatStockQuantity(item);
+        const unitPrice = parseFloat(item.price) || 0;
+        const totalVal = calculateTotalItemValue(item);
+        grandTotalValue += totalVal;
+
+        const expStr = item.expiryDate || 'N/A';
+        const statusStr = item.expInfo.status === 'EXPIRED' ? 'EXPIRED' : (item.expInfo.status === 'EXP_SOON' ? 'Expiring Soon' : 'OK');
+
+        return [
+          index + 1,
+          item.name,
+          item.category || 'Bakery',
+          item.barcode || '-',
+          qtyStr,
+          `$${unitPrice.toFixed(2)}`,
+          `$${totalVal.toFixed(2)}`,
+          expStr,
+          statusStr
+        ];
+      });
+
+      doc.autoTable({
+        startY: 38,
+        head: [['#', 'Product Name', 'Category', 'SKU/Barcode', 'Stock Qty', 'Unit Price', 'Total Value', 'Expiry', 'Status']],
+        body: tableData,
+        theme: 'striped',
+        headStyles: {
+          fillColor: [217, 119, 6],
+          textColor: [255, 255, 255],
+          fontSize: 8,
+          fontStyle: 'bold'
+        },
+        bodyStyles: {
+          fontSize: 8,
+          textColor: [30, 41, 59]
+        },
+        alternateRowStyles: {
+          fillColor: [248, 250, 252]
+        }
+      });
+
+      const finalY = doc.lastAutoTable.finalY + 8;
+      doc.setFillColor(241, 245, 249);
+      doc.rect(14, finalY, 182, 12, 'F');
+      doc.setTextColor(15, 23, 42);
+      doc.setFontSize(10);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`Total Portfolio Valuation: $${grandTotalValue.toFixed(2)}`, 18, finalY + 8);
+
+      doc.save(`Lavesh_Inventory_${monthVal || 'All'}_${Date.now()}.pdf`);
+
+      Swal.fire({
+        toast: true,
+        position: 'top-end',
+        icon: 'success',
+        title: 'PDF exported successfully!',
+        showConfirmButton: false,
+        timer: 1800
+      });
+    }
+  </script>
+</body>
+</html>
