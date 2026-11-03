@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Lavesh Cafe & Bakery - Inventory Pro</title>
+  <title>Lavesh Cafe & Bakery - Inventory Pro (SAR)</title>
 
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -59,23 +59,23 @@
           <i class="fa-solid fa-mug-hot"></i>
         </div>
         <h2 class="text-2xl font-black tracking-tight text-white">Lavesh Cafe & Bakery</h2>
-        <p class="text-xs text-amber-400/90 font-medium mt-1" data-i18n="portal_subtitle">Inventory Management System</p>
+        <p class="text-xs text-amber-400 font-medium mt-1">Inventory Management System &bull; KSA</p>
       </div>
 
       <div class="mb-4 p-3 bg-amber-500/10 border border-amber-500/20 rounded-xl text-left">
         <div class="text-[11px] font-bold text-amber-400 flex items-center gap-1.5 mb-1">
-          <i class="fa-solid fa-shield-halved"></i> Cloud Database Authentication:
+          <i class="fa-solid fa-shield-halved"></i> Cloud Authentication:
         </div>
         <div class="text-[11px] text-slate-300">
           Default: <span class="font-mono text-white bg-slate-900 px-1.5 py-0.5 rounded">admin</span> / 
           <span class="font-mono text-white bg-slate-900 px-1.5 py-0.5 rounded">admin123</span>
-          <span class="block text-[10px] text-slate-400 mt-1 italic">* Firebase Realtime Database এর settings/admin থেকে পাসওয়ার্ড বদলাতে পারবেন।</span>
+          <span class="block text-[10px] text-slate-400 mt-1 italic">* Firebase Realtime Database এর settings/admin থেকে পাসওয়ার্ড পরিবর্তন করা যাবে।</span>
         </div>
       </div>
 
       <form onsubmit="handleAuth(event)" class="space-y-4">
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1" data-i18n="lbl_username">Username / Email</label>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Username / Email</label>
           <div class="relative">
             <i class="fa-solid fa-user absolute left-4 top-3.5 text-slate-500 text-sm"></i>
             <input type="text" id="authEmail" required value="admin"
@@ -84,7 +84,7 @@
         </div>
 
         <div>
-          <label class="block text-xs font-semibold text-slate-300 mb-1" data-i18n="lbl_password">Password</label>
+          <label class="block text-xs font-semibold text-slate-300 mb-1">Password</label>
           <div class="relative">
             <i class="fa-solid fa-lock absolute left-4 top-3.5 text-slate-500 text-sm"></i>
             <input type="password" id="authPassword" required value="admin123"
@@ -94,7 +94,7 @@
 
         <button type="submit"
           class="w-full py-3.5 mt-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 font-bold rounded-xl text-slate-950 shadow-lg shadow-amber-500/20 transition-all text-sm flex items-center justify-center gap-2">
-          <span data-i18n="btn_login">Sign In</span>
+          <span>Sign In (লগইন)</span>
           <i class="fa-solid fa-arrow-right"></i>
         </button>
       </form>
@@ -113,7 +113,7 @@
           <h1 class="text-base font-extrabold tracking-tight text-white leading-tight">Lavesh Cafe & Bakery</h1>
           <p class="text-[11px] text-amber-400 font-semibold flex items-center gap-1.5">
             <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-            <span data-i18n="nav_online_db">Live Cloud RTDB</span>
+            <span>Live Cloud RTDB &bull; Currency: SAR (ريال)</span>
           </p>
         </div>
       </div>
@@ -270,15 +270,20 @@
             <input type="text" id="pName" required placeholder="e.g. Chocolate Croissant" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500" />
           </div>
 
-          <!-- Spinner & Text Category -->
+          <!-- PURE CATEGORY DROPDOWN WITH EXISTING ITEMS -->
           <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1" data-i18n="lbl_category">Category *</label>
-            <div class="space-y-1.5">
-              <select id="pCategorySelect" onchange="onCategorySelectChange(this.value)" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-amber-400 font-semibold focus:outline-none focus:border-amber-500 cursor-pointer">
-                <option value="">-- Choose Existing Category --</option>
-                <option value="__NEW__">+ Type New Category...</option>
-              </select>
-              <input type="text" id="pCategory" required placeholder="Category name..." class="w-full px-3.5 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500" />
+            <label class="block text-xs font-semibold text-slate-300 mb-1">
+              <span data-i18n="lbl_category">Category *</span>
+              <span class="text-[10px] text-amber-400 font-normal ml-1">(ড্রপডাউন থেকে বাছুন)</span>
+            </label>
+            
+            <select id="pCategorySelect" onchange="handleCategoryDropdown(this.value)" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white font-semibold focus:outline-none focus:border-amber-500 cursor-pointer">
+              <!-- Dynamically Populated with all existing categories -->
+            </select>
+
+            <!-- Input appears only if user selects "+ Add New Category" -->
+            <div id="newCategoryWrapper" class="hidden mt-2">
+              <input type="text" id="pCategoryNew" placeholder="নতুন ক্যাটাগরির নাম লিখুন (New Category Name)..." class="w-full px-3.5 py-2 bg-slate-950 border border-amber-500/50 rounded-xl text-xs text-amber-300 focus:outline-none focus:border-amber-400" />
             </div>
           </div>
         </div>
@@ -301,9 +306,9 @@
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1" data-i18n="lbl_unit_type">Measurement Unit *</label>
             <select id="pUnitType" onchange="toggleUnitFields()" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500">
-              <option value="PIECE">Piece (Pcs)</option>
-              <option value="CARTON">Carton / Box</option>
-              <option value="WEIGHT">Weight (Gram / KG)</option>
+              <option value="PIECE">Piece (Pcs / حبة)</option>
+              <option value="CARTON">Carton / Box (كرتون)</option>
+              <option value="WEIGHT">Weight (Gram / KG / كيلو)</option>
             </select>
           </div>
         </div>
@@ -336,17 +341,17 @@
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">
               <span data-i18n="lbl_unit_price">Unit Price</span>
-              <span class="text-[10px] text-amber-400 font-normal">(SAR - Default 0)</span>
+              <span class="text-[10px] text-amber-400 font-semibold">(SAR - রিয়াল)</span>
             </label>
             <div class="relative">
-              <span class="absolute left-3 top-2.5 text-xs text-slate-500 font-semibold">SAR</span>
+              <span class="absolute left-3 top-2.5 text-xs text-amber-400 font-bold">SAR</span>
               <input type="number" id="pPrice" step="any" placeholder="0.00" class="w-full pl-12 pr-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 font-mono" />
             </div>
           </div>
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">
               <span data-i18n="lbl_expiry">Batch Expiry Date *</span>
-              <span class="text-[10px] text-amber-400 font-normal">(আলাদা মেয়াদের আলাদা ব্যাচ)</span>
+              <span class="text-[10px] text-amber-400 font-normal">(মেয়াদ উত্তীর্ণের তারিখ)</span>
             </label>
             <input type="date" id="pExpiry" required class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 cursor-pointer" />
           </div>
@@ -374,7 +379,7 @@
     </div>
   </div>
 
-  <!-- ================= BATCH SELECTION MODAL (WHEN SAME BARCODE HAS MULTIPLE EXPIRIES) ================= -->
+  <!-- ================= BATCH SELECTION MODAL ================= -->
   <div id="batchSelectModal" class="fixed inset-0 z-[80] hidden flex items-center justify-center p-4 glass-modal">
     <div class="glass-panel w-full max-w-lg p-6 rounded-3xl border border-slate-700 shadow-2xl relative">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800">
@@ -390,10 +395,7 @@
         </button>
       </div>
 
-      <!-- List of Batches -->
-      <div id="batchSelectListContainer" class="my-4 max-h-72 overflow-y-auto space-y-2.5 pr-1">
-        <!-- Rendered by JS -->
-      </div>
+      <div id="batchSelectListContainer" class="my-4 max-h-72 overflow-y-auto space-y-2.5 pr-1"></div>
 
       <div class="pt-3 border-t border-slate-800 flex items-center justify-between">
         <button type="button" id="addNewBatchBtn" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500 text-amber-400 hover:text-slate-950 text-xs font-bold border border-amber-500/40 flex items-center gap-1.5 transition-all">
@@ -429,7 +431,7 @@
     </div>
   </div>
 
-  <!-- ================= QUICK ADJUSTMENT MODAL (+ / -) WITH PRODUCT PHOTO ================= -->
+  <!-- ================= QUICK ADJUSTMENT MODAL (+ / -) ================= -->
   <div id="quickAdjustModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 glass-modal">
     <div class="glass-panel w-full max-w-sm p-6 rounded-3xl border border-slate-700 shadow-2xl relative text-center">
       <div id="qaItemHeader" class="mb-4"></div>
@@ -463,14 +465,10 @@
 
   <!-- ================= JAVASCRIPT ================= -->
   <script>
-    // --- 1. I18N MULTI-LANGUAGE TRANSLATIONS (WITH SAR CURRENCY) ---
+    // --- 1. TRANSLATIONS (WITH RIYAL / SAR) ---
     const TRANSLATIONS = {
       en: {
-        portal_subtitle: "Inventory Management System",
-        lbl_username: "Username / Email",
-        lbl_password: "Password",
-        btn_login: "Sign In",
-        nav_online_db: "Live Cloud RTDB",
+        portal_subtitle: "Inventory Management System &bull; KSA",
         btn_pdf: "Export PDF",
         btn_scanner: "Scanner",
         btn_add_item: "New Item",
@@ -514,11 +512,7 @@
         toast_saved: "Batch saved successfully"
       },
       ar: {
-        portal_subtitle: "نظام إدارة المخزون والمستودع",
-        lbl_username: "اسم المستخدم / البريد",
-        lbl_password: "كلمة المرور",
-        btn_login: "تسجيل الدخول",
-        nav_online_db: "قاعدة بيانات سحابية نشطة",
+        portal_subtitle: "نظام إدارة المخزون والمستودع &bull; المملكة",
         btn_pdf: "تصدير PDF",
         btn_scanner: "الماسح الضوئي",
         btn_add_item: "منتج جديد",
@@ -562,16 +556,12 @@
         toast_saved: "تم حفظ الدفعة بنجاح"
       },
       bn: {
-        portal_subtitle: "স্মার্ট স্টক ও ইনভেন্টরি ম্যানেজমেন্ট",
-        lbl_username: "ইউজারনেম / ইমেইল",
-        lbl_password: "পাসওয়ার্ড",
-        btn_login: "প্রবেশ করুন",
-        nav_online_db: "লাইভ ক্লাউড আরটিডিবি",
+        portal_subtitle: "স্মার্ট স্টক ও ইনভেন্টরি ম্যানেজমেন্ট &bull; কেএসএ",
         btn_pdf: "পিডিএফ রিপোর্ট",
         btn_scanner: "স্ক্যানার",
         btn_add_item: "নতুন আইটেম",
         stat_total_items: "মোট ব্যাচ সংখ্যা",
-        stat_total_valuation: "মোট স্টক মূল্য (SAR)",
+        stat_total_valuation: "মোট স্টক মূল্য (SAR রিয়াল)",
         stat_low_stock: "লো স্টক (≤৫)",
         stat_exp_soon: "মেয়াদ সন্নিকটে",
         stat_expired: "মেয়াদোত্তীর্ণ",
@@ -596,7 +586,7 @@
         btn_scan_mini: "স্ক্যান",
         lbl_unit_type: "পরিমাপের একক *",
         lbl_stock_qty: "ব্যাচের স্টকের পরিমাণ *",
-        lbl_unit_price: "ইউনিট মূল্য",
+        lbl_unit_price: "ইউনিট মূল্য (SAR)",
         lbl_expiry: "ব্যাচ মেয়াদ উত্তীর্ণের তারিখ *",
         lbl_photo: "পণ্যের ছবি",
         btn_cancel: "বাতিল",
@@ -632,6 +622,14 @@
       });
 
       renderProducts();
+    }
+
+    // Currency Formatter Helper
+    function formatSAR(amount) {
+      const val = Number(amount || 0).toFixed(2);
+      if (currentLang === 'ar') return `${val} ر.س`;
+      if (currentLang === 'bn') return `SAR ${val}`;
+      return `SAR ${val}`;
     }
 
     // --- 2. CONFIGURATIONS ---
@@ -683,7 +681,7 @@
       }
     }
 
-    // --- 4. AUTHENTICATION (FROM FIREBASE REALTIME DATABASE) ---
+    // --- 4. AUTHENTICATION ---
     window.addEventListener('DOMContentLoaded', () => {
       changeLanguage(currentLang);
 
@@ -787,12 +785,12 @@
       }
     }
 
-    // --- 7. VALUATION & QUANTITY HELPERS (SAR) ---
+    // --- 7. VALUATION & QUANTITY HELPERS (RIYAL) ---
     function calculateTotalItemValue(item) {
       const price = parseFloat(item.price) || 0;
       const qty = parseFloat(item.quantity) || 0;
       if (item.unitType === 'WEIGHT') {
-        return price * (qty / 1000); // SAR per KG
+        return price * (qty / 1000);
       }
       return price * qty;
     }
@@ -852,19 +850,20 @@
       renderProducts();
     }
 
-    // --- 8. CATEGORY SPINNER & AUTOCOMPLETE ---
+    // --- 8. CATEGORY DROPDOWN MANAGEMENT ---
     function updateCategoryOptions() {
       const filterSelect = document.getElementById('filterCategory');
-      const spinnerSelect = document.getElementById('pCategorySelect');
+      const modalSelect = document.getElementById('pCategorySelect');
       const cats = new Set();
 
+      // Collect all categories previously created in database
       Object.values(inventoryData).forEach(item => {
         if (item.category && item.category.trim() !== '') {
           cats.add(item.category.trim());
         }
       });
 
-      // Filter category options
+      // Update Filter Toolbar
       const currentFilterVal = filterSelect.value;
       filterSelect.innerHTML = `<option value="ALL">${TRANSLATIONS[currentLang].opt_all_categories}</option>`;
       cats.forEach(c => {
@@ -872,37 +871,55 @@
       });
       filterSelect.value = currentFilterVal;
 
-      // Add Modal Spinner options
-      spinnerSelect.innerHTML = `
-        <option value="">-- Choose Existing Category --</option>
-        <option value="__NEW__">+ Type New Category...</option>
-      `;
+      // Update Add/Edit Modal Dropdown
+      const currentModalVal = modalSelect.value;
+      modalSelect.innerHTML = `<option value="">-- ক্যাটাগরি বেছে নিন (Choose Category) --</option>`;
+      
       cats.forEach(c => {
-        spinnerSelect.innerHTML += `<option value="${c}">${c}</option>`;
+        modalSelect.innerHTML += `<option value="${c}">${c}</option>`;
       });
-    }
 
-    function onCategorySelectChange(val) {
-      const catInput = document.getElementById('pCategory');
-      if (val === '__NEW__') {
-        catInput.value = '';
-        catInput.focus();
-      } else if (val) {
-        catInput.value = val;
+      modalSelect.innerHTML += `<option value="__NEW__" class="text-amber-400 font-bold">➕ নতুন ক্যাটাগরি লিখুন (+ Add New Category)</option>`;
+
+      if (cats.has(currentModalVal)) {
+        modalSelect.value = currentModalVal;
       }
     }
 
-    // Auto-fill existing product info when typing/scanning a known barcode
+    function handleCategoryDropdown(val) {
+      const wrapper = document.getElementById('newCategoryWrapper');
+      const newCatInput = document.getElementById('pCategoryNew');
+
+      if (val === '__NEW__') {
+        wrapper.classList.remove('hidden');
+        newCatInput.value = '';
+        newCatInput.focus();
+      } else {
+        wrapper.classList.add('hidden');
+        newCatInput.value = '';
+      }
+    }
+
     function checkExistingBarcode(code) {
       if (!code) return;
       const cleanCode = code.trim().toLowerCase();
       const existing = Object.values(inventoryData).find(i => i.barcode && i.barcode.trim().toLowerCase() === cleanCode);
       if (existing) {
         document.getElementById('pName').value = existing.name || '';
-        document.getElementById('pCategory').value = existing.category || '';
-        document.getElementById('pCategorySelect').value = existing.category || '';
         document.getElementById('pUnitType').value = existing.unitType || 'PIECE';
         document.getElementById('pPrice').value = existing.price || 0;
+        
+        // Auto-select category
+        const select = document.getElementById('pCategorySelect');
+        if ([...select.options].some(o => o.value === existing.category)) {
+          select.value = existing.category;
+          handleCategoryDropdown(existing.category);
+        } else if (existing.category) {
+          select.value = '__NEW__';
+          handleCategoryDropdown('__NEW__');
+          document.getElementById('pCategoryNew').value = existing.category;
+        }
+
         toggleUnitFields();
 
         Swal.fire({
@@ -978,7 +995,7 @@
       });
 
       document.getElementById('statTotalItems').innerText = totalItems;
-      document.getElementById('statTotalValuation').innerText = `SAR ${totalStockValuation.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById('statTotalValuation').innerText = formatSAR(totalStockValuation);
       document.getElementById('statLowStock').innerText = lowStockCount;
       document.getElementById('statExpSoon').innerText = expSoonCount;
       document.getElementById('statExpired').innerText = expiredCount;
@@ -1026,10 +1043,10 @@
             <span class="text-[11px] text-slate-400 md:hidden font-semibold">${TRANSLATIONS[currentLang].col_price}:</span>
             <div>
               <div class="text-xs font-bold text-white font-mono">
-                Total: <span class="text-emerald-400 font-bold">SAR ${totalVal.toFixed(2)}</span>
+                Total: <span class="text-emerald-400 font-bold">${formatSAR(totalVal)}</span>
               </div>
               <div class="text-[10px] text-slate-400 font-mono">
-                Unit: SAR ${unitPrice.toFixed(2)} ${item.unitType === 'WEIGHT' ? '/kg' : ''}
+                Unit: ${formatSAR(unitPrice)} ${item.unitType === 'WEIGHT' ? '/kg' : ''}
               </div>
             </div>
           </div>
@@ -1068,7 +1085,7 @@
       emptyState.classList.toggle('hidden', filteredList.length > 0);
     }
 
-    // --- 9. PRODUCT MODAL HANDLERS (SEPARATE BATCHES FOR DIFFERENT EXPIRIES) ---
+    // --- 9. PRODUCT MODAL HANDLERS ---
     function openProductModal(prefillBarcode = '') {
       document.getElementById('productForm').reset();
       document.getElementById('editItemId').value = '';
@@ -1076,7 +1093,9 @@
       document.getElementById('imagePreviewContainer').classList.add('hidden');
       document.getElementById('pUnitType').value = 'PIECE';
       document.getElementById('pPrice').value = '0';
+      document.getElementById('newCategoryWrapper').classList.add('hidden');
       toggleUnitFields();
+      updateCategoryOptions();
 
       if (prefillBarcode) {
         document.getElementById('pBarcode').value = prefillBarcode;
@@ -1099,12 +1118,22 @@
       document.getElementById('editItemId').value = key;
       document.getElementById('modalHeading').innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-400"></i> ${TRANSLATIONS[currentLang].modal_edit_title}`;
       document.getElementById('pName').value = item.name || '';
-      document.getElementById('pCategory').value = item.category || '';
-      document.getElementById('pCategorySelect').value = item.category || '__NEW__';
       document.getElementById('pBarcode').value = item.barcode || '';
       document.getElementById('pUnitType').value = item.unitType || 'PIECE';
       document.getElementById('pPrice').value = item.price !== undefined ? item.price : 0;
       document.getElementById('pExpiry').value = item.expiryDate || '';
+
+      updateCategoryOptions();
+      const select = document.getElementById('pCategorySelect');
+
+      if ([...select.options].some(o => o.value === item.category)) {
+        select.value = item.category;
+        handleCategoryDropdown(item.category);
+      } else if (item.category) {
+        select.value = '__NEW__';
+        handleCategoryDropdown('__NEW__');
+        document.getElementById('pCategoryNew').value = item.category;
+      }
 
       toggleUnitFields();
       if (item.unitType === 'WEIGHT') {
@@ -1134,7 +1163,18 @@
       e.preventDefault();
       const id = document.getElementById('editItemId').value;
       const name = document.getElementById('pName').value.trim();
-      const category = document.getElementById('pCategory').value.trim() || 'General';
+      
+      // Determine Category from Dropdown or New Input
+      const selectVal = document.getElementById('pCategorySelect').value;
+      let category = selectVal;
+      if (selectVal === '__NEW__') {
+        category = document.getElementById('pCategoryNew').value.trim();
+      }
+      if (!category) {
+        Swal.fire('ক্যাটাগরি দিন!', 'অনুগ্রহ করে ড্রপডাউন থেকে একটি ক্যাটাগরি বেছে নিন বা নতুন লিখুন।', 'warning');
+        return;
+      }
+
       const barcode = document.getElementById('pBarcode').value.trim();
       const unitType = document.getElementById('pUnitType').value;
       const price = parseFloat(document.getElementById('pPrice').value) || 0;
@@ -1154,8 +1194,8 @@
 
         if (item.barcode && item.barcode.toLowerCase() === normBarcode && item.expiryDate === expiryDate) {
           Swal.fire({
-            title: 'একই মেয়াদের ব্যাচ ইতিমধ্যে রয়েছে!',
-            html: `বারকোড: <b>"${barcode}"</b> এবং মেয়াদ: <b>"${expiryDate}"</b> দিয়ে ইতিমধ্যে একটি ব্যাচ আছে। অনুগ্রহ করে আলাদা মেয়াদ দিন বা স্টকে যোগ (+) করুন।`,
+            title: 'একই মেয়াদের ব্যাচ রয়েছে!',
+            html: `বারকোড: <b>"${barcode}"</b> এবং মেয়াদ: <b>"${expiryDate}"</b> দিয়ে ইতিমধ্যে স্টক আছে।`,
             icon: 'warning'
           });
           return;
@@ -1181,7 +1221,6 @@
 
         let imageUrl = id && inventoryData[id] ? inventoryData[id].imageUrl : '';
 
-        // If no new image uploaded, check if image exists for same barcode
         if (imageFile) {
           imageUrl = await uploadToImgBB(imageFile);
         } else if (!imageUrl) {
@@ -1326,7 +1365,7 @@
       });
     }
 
-    // --- 11. BATCH SELECTION MODAL LOGIC (FOR MULTIPLE EXPIRIES ON SAME BARCODE) ---
+    // --- 11. BATCH SELECTION MODAL LOGIC ---
     function openBatchSelectModal(barcode, matchingBatches) {
       const container = document.getElementById('batchSelectListContainer');
       const subTitle = document.getElementById('batchSelectSubTitle');
@@ -1350,7 +1389,7 @@
               <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${expInfo.badgeClass}">${expInfo.text}</span>
             </div>
             <div class="text-xs text-slate-400 mt-1">
-              Stock: <span class="font-bold text-emerald-400">${formatStockQuantity(item)}</span> | Unit: SAR ${Number(item.price || 0).toFixed(2)}
+              Stock: <span class="font-bold text-emerald-400">${formatStockQuantity(item)}</span> | Unit: ${formatSAR(item.price)}
             </div>
           </div>
 
@@ -1479,13 +1518,11 @@
           timer: 1500
         });
       } else {
-        // GLOBAL SCANNER MODE: Find all batches for this barcode
         const matchingBatches = Object.entries(inventoryData).filter(([_, item]) => 
           item && item.barcode && String(item.barcode).trim().toLowerCase() === code.toLowerCase()
         );
 
         if (matchingBatches.length === 0) {
-          // No product found with this barcode
           Swal.fire({
             title: 'কোনো পণ্য পাওয়া যায়নি!',
             html: `
@@ -1504,10 +1541,8 @@
             }
           });
         } else if (matchingBatches.length === 1) {
-          // Exactly 1 batch found: open quick adjust
           openQuickAdjust(matchingBatches[0][0], 'IN');
         } else {
-          // Multiple batches with DIFFERENT EXPIRIES exist! Open Batch Selection Dialog!
           openBatchSelectModal(code, matchingBatches);
         }
       }
@@ -1517,7 +1552,7 @@
       stopScannerImmediately();
     }
 
-    // --- 13. PDF REPORT GENERATOR WITH VALUATIONS (SAR) ---
+    // --- 13. PDF REPORT GENERATOR (RIYAL - SAR) ---
     function downloadFilteredPDF() {
       const filteredList = getFilteredItems();
 
@@ -1543,7 +1578,7 @@
       doc.setTextColor(255, 255, 255);
       doc.setFontSize(10);
       doc.setFont('helvetica', 'normal');
-      doc.text(`Official Inventory Stock Report (Currency: SAR) | ${monthTitle}`, 14, 23);
+      doc.text(`Official Inventory Stock Report (Currency: SAR / Saudi Riyal) | ${monthTitle}`, 14, 23);
 
       doc.setTextColor(148, 163, 184);
       doc.setFontSize(8);
@@ -1607,7 +1642,7 @@
         toast: true,
         position: 'top-end',
         icon: 'success',
-        title: 'PDF exported successfully!',
+        title: 'PDF exported successfully in SAR!',
         showConfirmButton: false,
         timer: 1800
       });
