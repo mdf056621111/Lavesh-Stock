@@ -24,16 +24,9 @@
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Noto+Sans+Arabic:wght@400;600;700&family=Hind+Siliguri:wght@400;600;700&display=swap');
     
-    :root {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-    }
-    [dir="rtl"] {
-      font-family: 'Noto Sans Arabic', sans-serif;
-    }
-    body {
-      background-color: #080c14;
-      color: #f1f5f9;
-    }
+    :root { font-family: 'Plus Jakarta Sans', sans-serif; }
+    [dir="rtl"] { font-family: 'Noto Sans Arabic', sans-serif; }
+    body { background-color: #080c14; color: #f1f5f9; }
     .glass-panel {
       background: rgba(15, 23, 42, 0.75);
       backdrop-filter: blur(16px);
@@ -76,7 +69,7 @@
         <div class="text-[11px] text-slate-300">
           Default: <span class="font-mono text-white bg-slate-900 px-1.5 py-0.5 rounded">admin</span> / 
           <span class="font-mono text-white bg-slate-900 px-1.5 py-0.5 rounded">admin123</span>
-          <span class="block text-[10px] text-slate-400 mt-1 italic">* Firebase Console-এর settings/admin এ গিয়ে যেকোনো সময় পাসওয়ার্ড বদলাতে পারবেন।</span>
+          <span class="block text-[10px] text-slate-400 mt-1 italic">* Firebase Realtime Database এর settings/admin থেকে পাসওয়ার্ড বদলাতে পারবেন।</span>
         </div>
       </div>
 
@@ -127,7 +120,6 @@
 
       <!-- Action Items & Language Selector -->
       <div class="flex items-center gap-2 sm:gap-3">
-        <!-- Language Switcher -->
         <div class="relative flex items-center bg-slate-900 border border-slate-700 rounded-xl px-2 py-1">
           <i class="fa-solid fa-globe text-amber-400 text-xs mr-1.5"></i>
           <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-transparent text-xs text-white focus:outline-none font-semibold cursor-pointer">
@@ -213,7 +205,6 @@
         </div>
 
         <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
-          <!-- Month Filter -->
           <div class="flex items-center gap-1.5 bg-slate-900 border border-slate-700 rounded-xl px-2.5 py-1.5">
             <span class="text-[11px] text-slate-400" data-i18n="lbl_month">Month:</span>
             <input type="month" id="filterMonth" onchange="renderProducts()" class="bg-transparent text-xs text-white focus:outline-none cursor-pointer" />
@@ -233,9 +224,8 @@
         </div>
       </div>
 
-      <!-- ================= PROFESSIONAL EXECUTIVE LIST VIEW ================= -->
+      <!-- ================= LIST VIEW ================= -->
       <div class="glass-panel rounded-2xl overflow-hidden border border-slate-800 shadow-xl">
-        <!-- Desktop Header Row -->
         <div class="hidden md:grid grid-cols-12 gap-3 px-5 py-3.5 bg-slate-900/90 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
           <div class="col-span-4" data-i18n="col_item">Product Details</div>
           <div class="col-span-2" data-i18n="col_stock">In Stock</div>
@@ -244,25 +234,21 @@
           <div class="col-span-2 text-right" data-i18n="col_actions">Actions</div>
         </div>
 
-        <!-- Dynamic List Container -->
-        <div id="productsListContainer" class="divide-y divide-slate-800/60">
-          <!-- Rendered by JavaScript -->
-        </div>
+        <div id="productsListContainer" class="divide-y divide-slate-800/60"></div>
 
-        <!-- Empty State -->
         <div id="emptyState" class="hidden text-center py-16 px-4">
           <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-slate-900 flex items-center justify-center text-slate-500 text-2xl border border-slate-800">
             <i class="fa-solid fa-mug-saucer"></i>
           </div>
           <h3 class="text-sm font-bold text-slate-300" data-i18n="empty_title">No inventory products found</h3>
-          <p class="text-xs text-slate-500 mt-1" data-i18n="empty_desc">Click "New Item" above to add your first bakery product</p>
+          <p class="text-xs text-slate-500 mt-1" data-i18n="empty_desc">Click 'New Item' above to add your first bakery product</p>
         </div>
       </div>
 
     </main>
   </div>
 
-  <!-- ================= ADD / EDIT PRODUCT MODAL ================= -->
+  <!-- ================= ADD / EDIT PRODUCT MODAL (z-50) ================= -->
   <div id="productModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 glass-modal overflow-y-auto">
     <div class="glass-panel w-full max-w-xl my-6 p-6 rounded-3xl border border-slate-700/80 shadow-2xl relative">
       <div class="flex items-center justify-between pb-4 border-b border-slate-800">
@@ -288,15 +274,11 @@
               <span data-i18n="lbl_category">Category</span>
               <span class="text-[10px] text-amber-400 font-normal ml-1">(পূর্বের বা নতুন লিখুন)</span>
             </label>
-            <!-- Category Datalist: shows existing categories + allows new ones -->
             <input type="text" id="pCategory" list="existingCategoriesList" placeholder="Select or type category..." class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500" />
-            <datalist id="existingCategoriesList">
-              <!-- Dynamically populated from inventory data -->
-            </datalist>
+            <datalist id="existingCategoriesList"></datalist>
           </div>
         </div>
 
-        <!-- Barcode Field with Scan Button right next to it -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1" data-i18n="lbl_barcode">Barcode / SKU *</label>
@@ -322,10 +304,9 @@
           </div>
         </div>
 
-        <!-- Dynamic Gram/KG Inputs -->
         <div id="weightFields" class="hidden p-3 rounded-2xl bg-slate-900/60 border border-amber-500/30 space-y-2">
           <div class="text-[11px] text-amber-400 font-medium flex items-center gap-1.5">
-            <i class="fa-solid fa-scale-balanced"></i> Weight Mode (grams will auto-convert to KG):
+            <i class="fa-solid fa-scale-balanced"></i> Weight Mode (grams auto-convert to KG):
           </div>
           <div class="grid grid-cols-2 gap-2">
             <div>
@@ -364,7 +345,6 @@
           </div>
         </div>
 
-        <!-- ImgBB Upload Field -->
         <div>
           <label class="block text-xs font-semibold text-slate-300 mb-1">
             <span data-i18n="lbl_photo">Product Image</span>
@@ -387,8 +367,8 @@
     </div>
   </div>
 
-  <!-- ================= BARCODE SCANNER MODAL ================= -->
-  <div id="scannerModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 glass-modal">
+  <!-- ================= BARCODE SCANNER MODAL (z-[70] ALWAYS ON TOP) ================= -->
+  <div id="scannerModal" class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4 glass-modal">
     <div class="glass-panel w-full max-w-md p-5 rounded-3xl border border-slate-700 shadow-2xl relative text-center">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-4">
         <h4 class="text-sm font-bold text-white flex items-center gap-2">
@@ -400,18 +380,20 @@
         </button>
       </div>
 
-      <div id="scanner-reader" class="overflow-hidden rounded-2xl bg-black aspect-square flex items-center justify-center border border-slate-800"></div>
-      <p class="text-xs text-slate-400 mt-3" id="scannerInstruction">Point camera at product barcode</p>
+      <!-- Video Feed Container -->
+      <div id="scanner-reader" class="overflow-hidden rounded-2xl bg-black aspect-square flex items-center justify-center border border-slate-800 relative"></div>
+      
+      <p class="text-xs text-amber-400/90 mt-3 font-medium flex items-center justify-center gap-1.5" id="scannerInstruction">
+        <i class="fa-solid fa-barcode"></i> 
+        <span>Point camera directly at product barcode</span>
+      </p>
     </div>
   </div>
 
-  <!-- ================= QUICK ADJUSTMENT MODAL (+ / -) WITH PRODUCT IMAGE ================= -->
+  <!-- ================= QUICK ADJUSTMENT MODAL (+ / -) WITH PRODUCT PHOTO ================= -->
   <div id="quickAdjustModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 glass-modal">
     <div class="glass-panel w-full max-w-sm p-6 rounded-3xl border border-slate-700 shadow-2xl relative text-center">
-      <!-- Item Details with Photo -->
-      <div id="qaItemHeader" class="mb-4">
-        <!-- Rendered by JS -->
-      </div>
+      <div id="qaItemHeader" class="mb-4"></div>
 
       <div class="flex gap-2 justify-center mb-4">
         <button id="qaTypeAdd" onclick="setQAType('IN')" class="flex-1 py-2 rounded-xl text-xs font-bold transition-all bg-emerald-600 text-white shadow-lg shadow-emerald-600/30" data-i18n="qa_stock_in">
@@ -442,7 +424,7 @@
 
   <!-- ================= JAVASCRIPT ================= -->
   <script>
-    // --- 1. I18N MULTI-LANGUAGE TRANSLATION DICTIONARY ---
+    // --- 1. I18N MULTI-LANGUAGE TRANSLATIONS ---
     const TRANSLATIONS = {
       en: {
         portal_subtitle: "Inventory Management System",
@@ -642,10 +624,34 @@
     let scannerMode = "GLOBAL";
     let quickAdjustTargetId = null;
     let currentQAType = 'IN';
+    let isProcessingScan = false; // Scanner lock flag to prevent freezing!
 
-    // --- 3. AUTHENTICATION (SECURED VIA FIREBASE REALTIME DATABASE) ---
-    // The admin password is read strictly from Firebase RTDB (node: settings/admin).
-    // Can only be changed by logging into Firebase Console directly!
+    // --- 3. AUDIOPOS BEEP SOUND (TOT! SOUND) ---
+    function playScanBeep() {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        // High frequency POS beep (1500Hz)
+        osc.type = "sine";
+        osc.frequency.setValueAtTime(1500, ctx.currentTime);
+        gain.gain.setValueAtTime(0.3, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.1);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + 0.1);
+      } catch (e) {
+        console.warn("Audio Context error:", e);
+      }
+    }
+
+    // --- 4. AUTHENTICATION (FROM FIREBASE REALTIME DATABASE) ---
     window.addEventListener('DOMContentLoaded', () => {
       changeLanguage(currentLang);
 
@@ -662,19 +668,16 @@
       const password = document.getElementById('authPassword').value.trim();
 
       try {
-        Swal.fire({ title: 'Verifying Security...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
+        Swal.fire({ title: 'Verifying...', didOpen: () => Swal.showLoading(), allowOutsideClick: false });
 
-        // Fetch the secure admin settings from Firebase Realtime Database
         const adminSnap = await db.ref('settings/admin').once('value');
         let adminConfig = adminSnap.val();
 
-        // If not initialized yet in RTDB, seed default credentials
         if (!adminConfig) {
           adminConfig = { username: "admin", password: "admin123" };
           await db.ref('settings/admin').set(adminConfig);
         }
 
-        // Check credentials against Firebase RTDB settings
         const validUser = (email === adminConfig.username || email === "admin@stock.com" || email === "admin");
         const validPass = (password === adminConfig.password);
 
@@ -725,7 +728,7 @@
       });
     }
 
-    // --- 4. REALTIME DATABASE SYNC ---
+    // --- 5. REALTIME DATABASE SYNC ---
     function listenToDatabase() {
       db.ref('inventory').on('value', snapshot => {
         inventoryData = snapshot.val() || {};
@@ -734,7 +737,7 @@
       });
     }
 
-    // --- 5. IMGBB IMAGE UPLOADER ---
+    // --- 6. IMGBB IMAGE UPLOADER ---
     async function uploadToImgBB(file) {
       const formData = new FormData();
       formData.append("image", file);
@@ -752,11 +755,10 @@
       }
     }
 
-    // --- 6. VALUATION & QUANTITY HELPERS ---
+    // --- 7. VALUATION & QUANTITY HELPERS ---
     function calculateTotalItemValue(item) {
-      const price = parseFloat(item.price) || 0; // Default 0
+      const price = parseFloat(item.price) || 0;
       const qty = parseFloat(item.quantity) || 0;
-
       if (item.unitType === 'WEIGHT') {
         return price * (qty / 1000); // Price per KG
       }
@@ -818,7 +820,7 @@
       renderProducts();
     }
 
-    // --- 7. AUTO-POPULATE CATEGORY LIST & FILTERS ---
+    // --- 8. AUTO-POPULATE CATEGORY LIST & FILTERS ---
     function updateCategoryOptions() {
       const filterSelect = document.getElementById('filterCategory');
       const datalist = document.getElementById('existingCategoriesList');
@@ -830,7 +832,6 @@
         }
       });
 
-      // Update Filter Select
       const currentVal = filterSelect.value;
       filterSelect.innerHTML = `<option value="ALL">${TRANSLATIONS[currentLang].opt_all_categories}</option>`;
       cats.forEach(c => {
@@ -838,7 +839,6 @@
       });
       filterSelect.value = currentVal;
 
-      // Update Add/Edit Modal Datalist (Shows existing categories!)
       datalist.innerHTML = '';
       cats.forEach(c => {
         datalist.innerHTML += `<option value="${c}">`;
@@ -921,7 +921,6 @@
         const totalVal = calculateTotalItemValue(item);
 
         row.innerHTML = `
-          <!-- 1. Product Details (Col 4) -->
           <div class="md:col-span-4 flex items-center gap-3">
             <div class="w-12 h-12 rounded-xl bg-slate-900 overflow-hidden flex-shrink-0 border border-slate-800 relative">
               <img src="${item.imageUrl || 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=150&q=80'}" 
@@ -940,7 +939,6 @@
             </div>
           </div>
 
-          <!-- 2. In Stock (Col 2) -->
           <div class="md:col-span-2 flex items-center justify-between md:justify-start">
             <span class="text-[11px] text-slate-400 md:hidden font-semibold">${TRANSLATIONS[currentLang].col_stock}:</span>
             <div>
@@ -951,7 +949,6 @@
             </div>
           </div>
 
-          <!-- 3. Pricing & Valuation (Col 2) -->
           <div class="md:col-span-2 flex items-center justify-between md:justify-start">
             <span class="text-[11px] text-slate-400 md:hidden font-semibold">${TRANSLATIONS[currentLang].col_price}:</span>
             <div>
@@ -964,7 +961,6 @@
             </div>
           </div>
 
-          <!-- 4. Expiry Status (Col 2) -->
           <div class="md:col-span-2 flex items-center justify-between md:justify-start">
             <span class="text-[11px] text-slate-400 md:hidden font-semibold">${TRANSLATIONS[currentLang].col_expiry}:</span>
             <div>
@@ -975,7 +971,6 @@
             </div>
           </div>
 
-          <!-- 5. Actions (Col 2) -->
           <div class="md:col-span-2 flex items-center justify-end gap-1.5 pt-2 md:pt-0 border-t md:border-t-0 border-slate-800/80">
             <button onclick="openQuickAdjust('${item.key}', 'IN')" title="Stock In (+)" class="w-8 h-8 rounded-xl bg-emerald-600/20 hover:bg-emerald-600 text-emerald-400 hover:text-white flex items-center justify-center text-xs font-bold transition-all">
               <i class="fa-solid fa-plus"></i>
@@ -997,14 +992,14 @@
       emptyState.classList.toggle('hidden', filteredList.length > 0);
     }
 
-    // --- 8. PRODUCT MODAL HANDLERS ---
+    // --- 9. PRODUCT MODAL HANDLERS ---
     function openProductModal() {
       document.getElementById('productForm').reset();
       document.getElementById('editItemId').value = '';
       document.getElementById('modalHeading').innerHTML = `<i class="fa-solid fa-cake-candles text-amber-400"></i> ${TRANSLATIONS[currentLang].modal_add_title}`;
       document.getElementById('imagePreviewContainer').classList.add('hidden');
       document.getElementById('pUnitType').value = 'PIECE';
-      document.getElementById('pPrice').value = '0'; // default 0
+      document.getElementById('pPrice').value = '0';
       toggleUnitFields();
       generateBarcode();
       document.getElementById('productModal').classList.remove('hidden');
@@ -1062,7 +1057,6 @@
       const expiryDate = document.getElementById('pExpiry').value;
       const imageFile = document.getElementById('pImageInput').files[0];
 
-      // DUPLICATE VALIDATION
       const normBarcode = barcode.toLowerCase();
       const normName = name.toLowerCase();
 
@@ -1158,7 +1152,7 @@
       });
     }
 
-    // --- 9. QUICK ADJUSTMENT (+ / -) WITH ITEM PHOTO PREVIEW ---
+    // --- 10. QUICK ADJUSTMENT (+ / -) WITH ITEM PHOTO PREVIEW ---
     function openQuickAdjust(key, type = 'IN') {
       const item = inventoryData[key];
       if (!item) return;
@@ -1248,79 +1242,122 @@
       });
     }
 
-    // --- 10. SMART SCANNER SYSTEM ---
+    // --- 11. ROBUST BARCODE SCANNER WITH SOUND & INSTANT CLOSE ---
     function openGlobalScanner() {
       scannerMode = "GLOBAL";
-      document.getElementById('scannerInstruction').innerText = "Point camera at product to quickly adjust stock";
+      document.getElementById('scannerInstruction').innerHTML = `<i class="fa-solid fa-barcode"></i> <span>Point camera at product to quickly adjust stock</span>`;
       startScanner();
     }
 
     function startModalBarcodeScanner() {
       scannerMode = "MODAL_INPUT";
-      document.getElementById('scannerInstruction').innerText = "Scanning barcode directly into the input field";
+      document.getElementById('scannerInstruction').innerHTML = `<i class="fa-solid fa-barcode"></i> <span>Scanning directly into product barcode input</span>`;
       startScanner();
     }
 
     function startScanner() {
+      isProcessingScan = false; // Reset lock
       document.getElementById('scannerModal').classList.remove('hidden');
+
+      // Clear container if previously filled
+      document.getElementById('scanner-reader').innerHTML = '';
+
       activeScanner = new Html5Qrcode("scanner-reader");
-      
-      const config = { fps: 10, qrbox: { width: 250, height: 250 } };
-      activeScanner.start({ facingMode: "environment" }, config, onScanSuccess)
-        .catch(err => {
-          Swal.fire('Camera Error', err.message || 'Camera permission required', 'error');
-          closeScannerModal();
-        });
+      const config = { fps: 15, qrbox: { width: 250, height: 250 } };
+
+      activeScanner.start(
+        { facingMode: "environment" },
+        config,
+        onScanSuccess
+      ).catch(err => {
+        console.error("Camera start error:", err);
+        Swal.fire('Camera Error', err.message || 'Camera permission required or device unavailable', 'error');
+        closeScannerModal();
+      });
     }
 
-    function onScanSuccess(decodedText) {
+    async function stopScannerSafely() {
       if (activeScanner) {
-        activeScanner.stop().then(() => {
-          closeScannerModal();
-
-          if (scannerMode === "MODAL_INPUT") {
-            document.getElementById('pBarcode').value = decodedText;
-            Swal.fire({
-              toast: true,
-              position: 'top-end',
-              icon: 'success',
-              title: `Scanned: ${decodedText}`,
-              showConfirmButton: false,
-              timer: 1500
-            });
-          } else {
-            const foundEntry = Object.entries(inventoryData).find(([_, item]) => item.barcode === decodedText);
-            if (foundEntry) {
-              openQuickAdjust(foundEntry[0], 'IN');
-            } else {
-              Swal.fire({
-                title: 'New Barcode Scanned',
-                text: `Code: ${decodedText}. Would you like to create a new product with this barcode?`,
-                icon: 'question',
-                showCancelButton: true,
-                confirmButtonText: 'Yes, Create',
-                cancelButtonText: 'No'
-              }).then(res => {
-                if (res.isConfirmed) {
-                  openProductModal();
-                  document.getElementById('pBarcode').value = decodedText;
-                }
-              });
-            }
+        try {
+          if (activeScanner.isScanning) {
+            await activeScanner.stop();
           }
-        });
-      }
-    }
-
-    function closeScannerModal() {
-      if (activeScanner) {
-        activeScanner.stop().then(() => activeScanner.clear()).catch(() => {});
-        activeScanner = null;
+          await activeScanner.clear();
+        } catch (e) {
+          console.warn("Scanner shutdown error:", e);
+        } finally {
+          activeScanner = null;
+        }
       }
       document.getElementById('scannerModal').classList.add('hidden');
     }
 
-    // --- 11. PDF REPORT GENERATOR WITH VALUATIONS ---
+    async function onScanSuccess(decodedText) {
+      if (isProcessingScan) return; // Prevent multiple executions!
+      isProcessingScan = true;
+
+      const code = decodedText.trim();
+
+      // 1. Play POS Beep Sound Instantly! ("Tot" sound)
+      playScanBeep();
+
+      // 2. Shut down scanner and close dialog immediately!
+      await stopScannerSafely();
+
+      // 3. Process Scanned Result
+      if (scannerMode === "MODAL_INPUT") {
+        // Scanned from within Add/Edit Item modal
+        const barcodeInput = document.getElementById('pBarcode');
+        if (barcodeInput) {
+          barcodeInput.value = code;
+          barcodeInput.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: `Scanned: ${code}`,
+          showConfirmButton: false,
+          timer: 1500
+        });
+      } else {
+        // Global Scan mode: Search in inventory
+        const foundEntry = Object.entries(inventoryData).find(([_, item]) => 
+          item.barcode && item.barcode.trim().toLowerCase() === code.toLowerCase()
+        );
+
+        if (foundEntry) {
+          // Product found: open quick stock adjustment (+ / -)
+          openQuickAdjust(foundEntry[0], 'IN');
+        } else {
+          // Product NOT found: Show friendly alert and option to create!
+          Swal.fire({
+            title: 'পণ্য পাওয়া যায়নি!',
+            html: `
+              <div class="text-sm">বারকোড: <b class="text-amber-400 font-mono text-base">${code}</b> দিয়ে স্টকে কোনো পণ্য নিবন্ধিত নেই।</div>
+              <p class="text-xs text-slate-400 mt-2.5">আপনি কি এই বারকোড দিয়ে নতুন একটি পণ্য যোগ করতে চান?</p>
+            `,
+            icon: 'info',
+            showCancelButton: true,
+            confirmButtonColor: '#f59e0b',
+            cancelButtonColor: '#334155',
+            confirmButtonText: '<i class="fa-solid fa-plus mr-1"></i> নতুন পণ্য যোগ করুন',
+            cancelButtonText: 'বাতিল'
+          }).then(res => {
+            if (res.isConfirmed) {
+              openProductModal();
+              document.getElementById('pBarcode').value = code;
+            }
+          });
+        }
+      }
+    }
+
+    function closeScannerModal() {
+      stopScannerSafely();
+    }
+
+    // --- 12. PDF REPORT GENERATOR WITH VALUATIONS ---
     function downloadFilteredPDF() {
       const filteredList = getFilteredItems();
 
