@@ -123,9 +123,9 @@
         <div class="relative flex items-center bg-slate-900 border border-slate-700 rounded-xl px-2 py-1">
           <i class="fa-solid fa-globe text-amber-400 text-xs mr-1.5"></i>
           <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-transparent text-xs text-white focus:outline-none font-semibold cursor-pointer">
-            <option value="en" class="bg-slate-900 text-white">English</option>
-            <option value="ar" class="bg-slate-900 text-white">العربية (Arabic)</option>
-            <option value="bn" class="bg-slate-900 text-white">বাংলা (Bangla)</option>
+            <option value="en" class="bg-slate-900 text-white">English (SAR)</option>
+            <option value="ar" class="bg-slate-900 text-white">العربية (ر.س)</option>
+            <option value="bn" class="bg-slate-900 text-white">বাংলা (SAR)</option>
           </select>
         </div>
 
@@ -157,7 +157,7 @@
       <div class="grid grid-cols-2 lg:grid-cols-5 gap-3.5">
         <div class="glass-panel p-4 rounded-2xl border-l-4 border-l-indigo-500">
           <div class="flex items-center justify-between">
-            <span class="text-[11px] text-slate-400 font-semibold" data-i18n="stat_total_items">Total Items</span>
+            <span class="text-[11px] text-slate-400 font-semibold" data-i18n="stat_total_items">Total Batches</span>
             <div class="w-7 h-7 rounded-lg bg-indigo-500/10 text-indigo-400 flex items-center justify-center text-xs"><i class="fa-solid fa-boxes-stacked"></i></div>
           </div>
           <h3 class="text-xl font-black text-white mt-1.5" id="statTotalItems">0</h3>
@@ -168,7 +168,7 @@
             <span class="text-[11px] text-slate-400 font-semibold" data-i18n="stat_total_valuation">Total Stock Value</span>
             <div class="w-7 h-7 rounded-lg bg-emerald-500/10 text-emerald-400 flex items-center justify-center text-xs"><i class="fa-solid fa-coins"></i></div>
           </div>
-          <h3 class="text-xl font-black text-emerald-400 mt-1.5" id="statTotalValuation">$0.00</h3>
+          <h3 class="text-xl font-black text-emerald-400 mt-1.5" id="statTotalValuation">SAR 0.00</h3>
         </div>
 
         <div class="glass-panel p-4 rounded-2xl border-l-4 border-l-amber-500">
@@ -200,7 +200,7 @@
       <div class="glass-panel p-3.5 rounded-2xl flex flex-col md:flex-row gap-3 items-center justify-between">
         <div class="relative w-full md:w-80">
           <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-500 text-xs"></i>
-          <input type="text" id="searchInput" oninput="renderProducts()" placeholder="Search by name or barcode..."
+          <input type="text" id="searchInput" oninput="renderProducts()" placeholder="Search by name, barcode or expiry..."
             class="w-full pl-10 pr-4 py-2 bg-slate-900/90 border border-slate-700/80 rounded-xl text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500 transition-all" />
         </div>
 
@@ -227,10 +227,10 @@
       <!-- ================= LIST VIEW ================= -->
       <div class="glass-panel rounded-2xl overflow-hidden border border-slate-800 shadow-xl">
         <div class="hidden md:grid grid-cols-12 gap-3 px-5 py-3.5 bg-slate-900/90 border-b border-slate-800 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
-          <div class="col-span-4" data-i18n="col_item">Product Details</div>
+          <div class="col-span-4" data-i18n="col_item">Product & Batch Details</div>
           <div class="col-span-2" data-i18n="col_stock">In Stock</div>
-          <div class="col-span-2" data-i18n="col_price">Unit Price / Total Value</div>
-          <div class="col-span-2" data-i18n="col_expiry">Expiry Status</div>
+          <div class="col-span-2" data-i18n="col_price">Unit Price / Total (SAR)</div>
+          <div class="col-span-2" data-i18n="col_expiry">Batch Expiry Date</div>
           <div class="col-span-2 text-right" data-i18n="col_actions">Actions</div>
         </div>
 
@@ -240,21 +240,21 @@
           <div class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-slate-900 flex items-center justify-center text-slate-500 text-2xl border border-slate-800">
             <i class="fa-solid fa-mug-saucer"></i>
           </div>
-          <h3 class="text-sm font-bold text-slate-300" data-i18n="empty_title">No inventory products found</h3>
-          <p class="text-xs text-slate-500 mt-1" data-i18n="empty_desc">Click 'New Item' above to add your first bakery product</p>
+          <h3 class="text-sm font-bold text-slate-300" data-i18n="empty_title">No inventory batches found</h3>
+          <p class="text-xs text-slate-500 mt-1" data-i18n="empty_desc">Click 'New Item' above to register a product batch</p>
         </div>
       </div>
 
     </main>
   </div>
 
-  <!-- ================= ADD / EDIT PRODUCT MODAL (z-50) ================= -->
+  <!-- ================= ADD / EDIT PRODUCT MODAL ================= -->
   <div id="productModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-3 glass-modal overflow-y-auto">
     <div class="glass-panel w-full max-w-xl my-6 p-6 rounded-3xl border border-slate-700/80 shadow-2xl relative">
       <div class="flex items-center justify-between pb-4 border-b border-slate-800">
         <h3 class="text-base font-bold text-white flex items-center gap-2" id="modalHeading">
           <i class="fa-solid fa-cake-candles text-amber-400"></i>
-          <span data-i18n="modal_add_title">Add New Product</span>
+          <span data-i18n="modal_add_title">Add Product Batch</span>
         </h3>
         <button onclick="closeProductModal()" class="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 flex items-center justify-center text-slate-400 hover:text-white transition-all">
           <i class="fa-solid fa-xmark text-sm"></i>
@@ -269,13 +269,17 @@
             <label class="block text-xs font-semibold text-slate-300 mb-1" data-i18n="lbl_product_name">Product Name *</label>
             <input type="text" id="pName" required placeholder="e.g. Chocolate Croissant" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500" />
           </div>
+
+          <!-- Spinner & Text Category -->
           <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1">
-              <span data-i18n="lbl_category">Category</span>
-              <span class="text-[10px] text-amber-400 font-normal ml-1">(পূর্বের বা নতুন লিখুন)</span>
-            </label>
-            <input type="text" id="pCategory" list="existingCategoriesList" placeholder="Select or type category..." class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500" />
-            <datalist id="existingCategoriesList"></datalist>
+            <label class="block text-xs font-semibold text-slate-300 mb-1" data-i18n="lbl_category">Category *</label>
+            <div class="space-y-1.5">
+              <select id="pCategorySelect" onchange="onCategorySelectChange(this.value)" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-amber-400 font-semibold focus:outline-none focus:border-amber-500 cursor-pointer">
+                <option value="">-- Choose Existing Category --</option>
+                <option value="__NEW__">+ Type New Category...</option>
+              </select>
+              <input type="text" id="pCategory" required placeholder="Category name..." class="w-full px-3.5 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500" />
+            </div>
           </div>
         </div>
 
@@ -283,7 +287,7 @@
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1" data-i18n="lbl_barcode">Barcode / SKU *</label>
             <div class="flex gap-1.5">
-              <input type="text" id="pBarcode" required placeholder="Scan or type code" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 font-mono" />
+              <input type="text" id="pBarcode" onchange="checkExistingBarcode(this.value)" required placeholder="Scan or type code" class="w-full px-3 py-2 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 font-mono" />
               <button type="button" onclick="startModalBarcodeScanner()" title="Scan with camera" class="px-2.5 py-2 bg-emerald-600/30 hover:bg-emerald-600 border border-emerald-500/40 text-emerald-300 hover:text-white rounded-xl text-xs font-bold flex items-center gap-1 transition-all">
                 <i class="fa-solid fa-camera"></i>
                 <span class="text-[11px]" data-i18n="btn_scan_mini">Scan</span>
@@ -324,7 +328,7 @@
         </div>
 
         <div id="generalStockField">
-          <label class="block text-xs font-semibold text-slate-300 mb-1" data-i18n="lbl_stock_qty">Current Stock Quantity *</label>
+          <label class="block text-xs font-semibold text-slate-300 mb-1" data-i18n="lbl_stock_qty">Batch Stock Quantity *</label>
           <input type="number" id="pQuantity" step="any" placeholder="0" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500" />
         </div>
 
@@ -332,16 +336,19 @@
           <div>
             <label class="block text-xs font-semibold text-slate-300 mb-1">
               <span data-i18n="lbl_unit_price">Unit Price</span>
-              <span class="text-[10px] text-slate-400 font-normal">(Default 0)</span>
+              <span class="text-[10px] text-amber-400 font-normal">(SAR - Default 0)</span>
             </label>
             <div class="relative">
-              <span class="absolute left-3 top-2.5 text-xs text-slate-500">$</span>
-              <input type="number" id="pPrice" step="any" placeholder="0.00" class="w-full pl-7 pr-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 font-mono" />
+              <span class="absolute left-3 top-2.5 text-xs text-slate-500 font-semibold">SAR</span>
+              <input type="number" id="pPrice" step="any" placeholder="0.00" class="w-full pl-12 pr-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 font-mono" />
             </div>
           </div>
           <div>
-            <label class="block text-xs font-semibold text-slate-300 mb-1" data-i18n="lbl_expiry">Expiry Date</label>
-            <input type="date" id="pExpiry" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500" />
+            <label class="block text-xs font-semibold text-slate-300 mb-1">
+              <span data-i18n="lbl_expiry">Batch Expiry Date *</span>
+              <span class="text-[10px] text-amber-400 font-normal">(আলাদা মেয়াদের আলাদা ব্যাচ)</span>
+            </label>
+            <input type="date" id="pExpiry" required class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 cursor-pointer" />
           </div>
         </div>
 
@@ -360,14 +367,47 @@
           <button type="button" onclick="closeProductModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold" data-i18n="btn_cancel">Cancel</button>
           <button type="submit" id="saveProductBtn" class="px-5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black shadow-lg shadow-amber-500/20 flex items-center gap-1.5">
             <i class="fa-solid fa-floppy-disk"></i>
-            <span data-i18n="btn_save">Save Product</span>
+            <span data-i18n="btn_save">Save Batch</span>
           </button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- ================= BARCODE SCANNER MODAL (HIGH Z-INDEX z-[90]) ================= -->
+  <!-- ================= BATCH SELECTION MODAL (WHEN SAME BARCODE HAS MULTIPLE EXPIRIES) ================= -->
+  <div id="batchSelectModal" class="fixed inset-0 z-[80] hidden flex items-center justify-center p-4 glass-modal">
+    <div class="glass-panel w-full max-w-lg p-6 rounded-3xl border border-slate-700 shadow-2xl relative">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+        <div>
+          <h3 class="text-base font-bold text-white flex items-center gap-2">
+            <i class="fa-solid fa-layer-group text-amber-400"></i>
+            <span>মেয়াদ অনুযায়ী ব্যাচ নির্বাচন করুন</span>
+          </h3>
+          <p class="text-xs text-slate-400 mt-0.5" id="batchSelectSubTitle">একই বারকোডে একাধিক মেয়াদের পণ্য পাওয়া গেছে</p>
+        </div>
+        <button onclick="closeBatchSelectModal()" class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- List of Batches -->
+      <div id="batchSelectListContainer" class="my-4 max-h-72 overflow-y-auto space-y-2.5 pr-1">
+        <!-- Rendered by JS -->
+      </div>
+
+      <div class="pt-3 border-t border-slate-800 flex items-center justify-between">
+        <button type="button" id="addNewBatchBtn" class="px-3.5 py-2 rounded-xl bg-amber-500/20 hover:bg-amber-500 text-amber-400 hover:text-slate-950 text-xs font-bold border border-amber-500/40 flex items-center gap-1.5 transition-all">
+          <i class="fa-solid fa-plus"></i>
+          <span>নতুন মেয়াদের ব্যাচ যোগ করুন</span>
+        </button>
+        <button onclick="closeBatchSelectModal()" class="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold">
+          বন্ধ করুন
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= BARCODE SCANNER MODAL ================= -->
   <div id="scannerModal" class="fixed inset-0 z-[90] hidden flex items-center justify-center p-4 glass-modal">
     <div class="glass-panel w-full max-w-md p-5 rounded-3xl border border-slate-700 shadow-2xl relative text-center">
       <div class="flex items-center justify-between pb-3 border-b border-slate-800 mb-3">
@@ -380,7 +420,6 @@
         </button>
       </div>
 
-      <!-- Real Video Reader Element -->
       <div id="scanner-reader" class="overflow-hidden rounded-2xl bg-black aspect-square flex items-center justify-center border border-slate-800 relative"></div>
       
       <p class="text-xs text-amber-400 mt-3 font-semibold flex items-center justify-center gap-1.5" id="scannerInstruction">
@@ -424,7 +463,7 @@
 
   <!-- ================= JAVASCRIPT ================= -->
   <script>
-    // --- 1. I18N MULTI-LANGUAGE TRANSLATIONS ---
+    // --- 1. I18N MULTI-LANGUAGE TRANSLATIONS (WITH SAR CURRENCY) ---
     const TRANSLATIONS = {
       en: {
         portal_subtitle: "Inventory Management System",
@@ -435,8 +474,8 @@
         btn_pdf: "Export PDF",
         btn_scanner: "Scanner",
         btn_add_item: "New Item",
-        stat_total_items: "Total Items",
-        stat_total_valuation: "Total Stock Value",
+        stat_total_items: "Total Batches",
+        stat_total_valuation: "Total Stock Value (SAR)",
         stat_low_stock: "Low Stock (≤5)",
         stat_exp_soon: "Expiring Soon",
         stat_expired: "Expired",
@@ -446,35 +485,33 @@
         opt_low_stock: "Low Stock (≤5)",
         opt_exp_soon: "Expiring Soon (≤5 Days)",
         opt_expired: "Expired Items",
-        col_item: "Product Details",
+        col_item: "Product & Batch Details",
         col_stock: "In Stock",
-        col_price: "Unit Price / Total Value",
-        col_expiry: "Expiry Status",
+        col_price: "Unit Price / Total (SAR)",
+        col_expiry: "Batch Expiry Date",
         col_actions: "Actions",
-        empty_title: "No inventory products found",
-        empty_desc: "Click 'New Item' above to add your first bakery product",
-        modal_add_title: "Add New Product",
-        modal_edit_title: "Edit Product",
+        empty_title: "No inventory batches found",
+        empty_desc: "Click 'New Item' above to register a product batch",
+        modal_add_title: "Add Product Batch",
+        modal_edit_title: "Edit Product Batch",
         lbl_product_name: "Product Name *",
-        lbl_category: "Category",
+        lbl_category: "Category *",
         lbl_barcode: "Barcode / SKU *",
         btn_scan_mini: "Scan",
         lbl_unit_type: "Measurement Unit *",
-        lbl_stock_qty: "Current Stock Quantity *",
+        lbl_stock_qty: "Batch Stock Quantity *",
         lbl_unit_price: "Unit Price",
-        lbl_expiry: "Expiry Date",
+        lbl_expiry: "Batch Expiry Date *",
         lbl_photo: "Product Image",
         btn_cancel: "Cancel",
-        btn_save: "Save Product",
+        btn_save: "Save Batch",
         scanner_title: "Live Barcode Scanner",
         qa_stock_in: "+ Stock In",
         qa_stock_out: "- Stock Out",
         qa_qty_hint: "Enter quantity:",
         btn_update: "Update Stock",
-        msg_duplicate_barcode: "Duplicate Barcode Detected!",
-        msg_duplicate_name: "Duplicate Product Name!",
         toast_updated: "Stock updated successfully",
-        toast_saved: "Product saved successfully"
+        toast_saved: "Batch saved successfully"
       },
       ar: {
         portal_subtitle: "نظام إدارة المخزون والمستودع",
@@ -485,8 +522,8 @@
         btn_pdf: "تصدير PDF",
         btn_scanner: "الماسح الضوئي",
         btn_add_item: "منتج جديد",
-        stat_total_items: "إجمالي المنتجات",
-        stat_total_valuation: "إجمالي قيمة المخزون",
+        stat_total_items: "إجمالي الشحنات/الدفعات",
+        stat_total_valuation: "إجمالي قيمة المخزون (ر.س)",
         stat_low_stock: "مخزون منخفض (≤5)",
         stat_exp_soon: "يقترب الانتهاء",
         stat_expired: "منتهي الصلاحية",
@@ -496,35 +533,33 @@
         opt_low_stock: "مخزون منخفض (≤5)",
         opt_exp_soon: "يقترب الانتهاء (≤5 أيام)",
         opt_expired: "منتجات منتهية",
-        col_item: "تفاصيل المنتج",
+        col_item: "تفاصيل المنتج والدفعة",
         col_stock: "المخزون المتوفر",
-        col_price: "سعر الوحدة / القيمة الإجمالية",
-        col_expiry: "حالة الصلاحية",
+        col_price: "سعر الوحدة / الإجمالي (ر.س)",
+        col_expiry: "تاريخ انتهاء الدفعة",
         col_actions: "الإجراءات",
-        empty_title: "لم يتم العثور على أي منتجات",
-        empty_desc: "اضغط على 'منتج جديد' لإضافة أول منتج للمخبز",
-        modal_add_title: "إضافة منتج جديد",
-        modal_edit_title: "تعديل المنتج",
+        empty_title: "لم يتم العثور على أي شحنات مخزون",
+        empty_desc: "اضغط على 'منتج جديد' لتسجيل دفعة جديدة",
+        modal_add_title: "إضافة دفعة جديدة للمنتج",
+        modal_edit_title: "تعديل دفعة المنتج",
         lbl_product_name: "اسم المنتج *",
-        lbl_category: "الفئة",
+        lbl_category: "الفئة *",
         lbl_barcode: "الباركود / الرمز *",
         btn_scan_mini: "مسح",
         lbl_unit_type: "وحدة القياس *",
-        lbl_stock_qty: "كمية المخزون *",
+        lbl_stock_qty: "كمية المخزون للدفعة *",
         lbl_unit_price: "سعر الوحدة",
-        lbl_expiry: "تاريخ الانتهاء",
+        lbl_expiry: "تاريخ انتهاء الدفعة *",
         lbl_photo: "صورة المنتج",
         btn_cancel: "إلغاء",
-        btn_save: "حفظ المنتج",
+        btn_save: "حفظ الدفعة",
         scanner_title: "ماسح الباركود المباشر",
         qa_stock_in: "+ إضافة للمخزون",
         qa_stock_out: "- سحب من المخزون",
         qa_qty_hint: "أدخل الكمية:",
         btn_update: "تحديث المخزون",
-        msg_duplicate_barcode: "تم اكتشاف باركود مكرر!",
-        msg_duplicate_name: "اسم المنتج موجود بالفعل!",
         toast_updated: "تم تحديث المخزون بنجاح",
-        toast_saved: "تم حفظ المنتج بنجاح"
+        toast_saved: "تم حفظ الدفعة بنجاح"
       },
       bn: {
         portal_subtitle: "স্মার্ট স্টক ও ইনভেন্টরি ম্যানেজমেন্ট",
@@ -535,8 +570,8 @@
         btn_pdf: "পিডিএফ রিপোর্ট",
         btn_scanner: "স্ক্যানার",
         btn_add_item: "নতুন আইটেম",
-        stat_total_items: "মোট পণ্য",
-        stat_total_valuation: "মোট স্টক মূল্য",
+        stat_total_items: "মোট ব্যাচ সংখ্যা",
+        stat_total_valuation: "মোট স্টক মূল্য (SAR)",
         stat_low_stock: "লো স্টক (≤৫)",
         stat_exp_soon: "মেয়াদ সন্নিকটে",
         stat_expired: "মেয়াদোত্তীর্ণ",
@@ -546,23 +581,23 @@
         opt_low_stock: "লো স্টক (≤৫)",
         opt_exp_soon: "মেয়াদ সন্নিকটে (≤৫ দিন)",
         opt_expired: "মেয়াদোত্তীর্ণ পণ্য",
-        col_item: "পণ্যের বিবরণ",
+        col_item: "পণ্য ও ব্যাচের বিবরণ",
         col_stock: "বর্তমান স্টক",
-        col_price: "ইউনিট মূল্য / মোট ভ্যালু",
-        col_expiry: "মেয়াদ স্থিতি",
+        col_price: "ইউনিট মূল্য / মোট (SAR)",
+        col_expiry: "ব্যাচ মেয়াদ উত্তীর্ণের তারিখ",
         col_actions: "অ্যাকশন",
-        empty_title: "কোনো পণ্য পাওয়া যায়নি",
-        empty_desc: "নতুন পণ্য যোগ করতে উপরের 'নতুন আইটেম' বাটনে ক্লিক করুন",
-        modal_add_title: "নতুন পণ্য যোগ করুন",
-        modal_edit_title: "পণ্য আপডেট করুন",
+        empty_title: "কোনো স্টক ব্যাচ পাওয়া যায়নি",
+        empty_desc: "নতুন পণ্য বা ব্যাচ যোগ করতে 'নতুন আইটেম' বাটনে ক্লিক করুন",
+        modal_add_title: "নতুন পণ্যের ব্যাচ যোগ করুন",
+        modal_edit_title: "ব্যাচ আপডেট করুন",
         lbl_product_name: "পণ্যের নাম *",
-        lbl_category: "ক্যাটাগরি",
+        lbl_category: "ক্যাটাগরি *",
         lbl_barcode: "বারকোড / কোড *",
         btn_scan_mini: "স্ক্যান",
         lbl_unit_type: "পরিমাপের একক *",
-        lbl_stock_qty: "স্টকের পরিমাণ *",
+        lbl_stock_qty: "ব্যাচের স্টকের পরিমাণ *",
         lbl_unit_price: "ইউনিট মূল্য",
-        lbl_expiry: "মেয়াদ উত্তীর্ণের তারিখ",
+        lbl_expiry: "ব্যাচ মেয়াদ উত্তীর্ণের তারিখ *",
         lbl_photo: "পণ্যের ছবি",
         btn_cancel: "বাতিল",
         btn_save: "সংরক্ষণ করুন",
@@ -571,10 +606,8 @@
         qa_stock_out: "- স্টক আউট (কমান)",
         qa_qty_hint: "পরিমাণ লিখুন:",
         btn_update: "স্টক আপডেট করুন",
-        msg_duplicate_barcode: "ডুপ্লিকেট বারকোড পাওয়া গেছে!",
-        msg_duplicate_name: "ডুপ্লিকেট পণ্যের নাম!",
         toast_updated: "স্টক সফলভাবে আপডেট হয়েছে",
-        toast_saved: "পণ্য সফলভাবে সংরক্ষিত হয়েছে"
+        toast_saved: "ব্যাচ সফলভাবে সংরক্ষিত হয়েছে"
       }
     };
 
@@ -635,7 +668,6 @@
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
 
-        // 1600Hz POS High Beep
         osc.type = "sine";
         osc.frequency.setValueAtTime(1600, ctx.currentTime);
         gain.gain.setValueAtTime(0.35, ctx.currentTime);
@@ -755,12 +787,12 @@
       }
     }
 
-    // --- 7. VALUATION & QUANTITY HELPERS ---
+    // --- 7. VALUATION & QUANTITY HELPERS (SAR) ---
     function calculateTotalItemValue(item) {
       const price = parseFloat(item.price) || 0;
       const qty = parseFloat(item.quantity) || 0;
       if (item.unitType === 'WEIGHT') {
-        return price * (qty / 1000);
+        return price * (qty / 1000); // SAR per KG
       }
       return price * qty;
     }
@@ -808,11 +840,11 @@
       const diffDays = Math.ceil((expDate - today) / (1000 * 60 * 60 * 24));
 
       if (diffDays < 0) {
-        return { status: 'EXPIRED', text: `Expired (${Math.abs(diffDays)}d ago)`, badgeClass: 'bg-rose-500/10 text-rose-400 border border-rose-500/30' };
+        return { status: 'EXPIRED', text: `Expired (${Math.abs(diffDays)}d ago)`, badgeClass: 'bg-rose-500/15 text-rose-400 border border-rose-500/30' };
       } else if (diffDays <= 5) {
-        return { status: 'EXP_SOON', text: `Expiring (${diffDays === 0 ? 'Today' : diffDays + 'd left'})`, badgeClass: 'bg-orange-500/10 text-orange-400 border border-orange-500/30' };
+        return { status: 'EXP_SOON', text: `Expiring (${diffDays === 0 ? 'Today' : diffDays + 'd left'})`, badgeClass: 'bg-orange-500/15 text-orange-400 border border-orange-500/30' };
       }
-      return { status: 'GOOD', text: `${diffDays} days left`, badgeClass: 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' };
+      return { status: 'GOOD', text: `${diffDays} days left`, badgeClass: 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/20' };
     }
 
     function clearMonthFilter() {
@@ -820,10 +852,10 @@
       renderProducts();
     }
 
-    // --- 8. AUTO-POPULATE CATEGORY LIST & FILTERS ---
+    // --- 8. CATEGORY SPINNER & AUTOCOMPLETE ---
     function updateCategoryOptions() {
       const filterSelect = document.getElementById('filterCategory');
-      const datalist = document.getElementById('existingCategoriesList');
+      const spinnerSelect = document.getElementById('pCategorySelect');
       const cats = new Set();
 
       Object.values(inventoryData).forEach(item => {
@@ -832,17 +864,56 @@
         }
       });
 
-      const currentVal = filterSelect.value;
+      // Filter category options
+      const currentFilterVal = filterSelect.value;
       filterSelect.innerHTML = `<option value="ALL">${TRANSLATIONS[currentLang].opt_all_categories}</option>`;
       cats.forEach(c => {
         filterSelect.innerHTML += `<option value="${c}">${c}</option>`;
       });
-      filterSelect.value = currentVal;
+      filterSelect.value = currentFilterVal;
 
-      datalist.innerHTML = '';
+      // Add Modal Spinner options
+      spinnerSelect.innerHTML = `
+        <option value="">-- Choose Existing Category --</option>
+        <option value="__NEW__">+ Type New Category...</option>
+      `;
       cats.forEach(c => {
-        datalist.innerHTML += `<option value="${c}">`;
+        spinnerSelect.innerHTML += `<option value="${c}">${c}</option>`;
       });
+    }
+
+    function onCategorySelectChange(val) {
+      const catInput = document.getElementById('pCategory');
+      if (val === '__NEW__') {
+        catInput.value = '';
+        catInput.focus();
+      } else if (val) {
+        catInput.value = val;
+      }
+    }
+
+    // Auto-fill existing product info when typing/scanning a known barcode
+    function checkExistingBarcode(code) {
+      if (!code) return;
+      const cleanCode = code.trim().toLowerCase();
+      const existing = Object.values(inventoryData).find(i => i.barcode && i.barcode.trim().toLowerCase() === cleanCode);
+      if (existing) {
+        document.getElementById('pName').value = existing.name || '';
+        document.getElementById('pCategory').value = existing.category || '';
+        document.getElementById('pCategorySelect').value = existing.category || '';
+        document.getElementById('pUnitType').value = existing.unitType || 'PIECE';
+        document.getElementById('pPrice').value = existing.price || 0;
+        toggleUnitFields();
+
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'info',
+          title: `Recognized: ${existing.name}. Just set the new Expiry Date & Quantity!`,
+          showConfirmButton: false,
+          timer: 2500
+        });
+      }
     }
 
     function getFilteredItems() {
@@ -857,7 +928,9 @@
         const expInfo = getExpiryStatus(item.expiryDate);
         const currentQty = Number(item.quantity) || 0;
 
-        let matchesSearch = item.name.toLowerCase().includes(search) || (item.barcode && item.barcode.toLowerCase().includes(search));
+        let matchesSearch = item.name.toLowerCase().includes(search) || 
+                            (item.barcode && item.barcode.toLowerCase().includes(search)) ||
+                            (item.expiryDate && item.expiryDate.includes(search));
         let matchesCat = filterCat === 'ALL' || item.category === filterCat;
         let matchesStatus = true;
 
@@ -905,7 +978,7 @@
       });
 
       document.getElementById('statTotalItems').innerText = totalItems;
-      document.getElementById('statTotalValuation').innerText = `$${totalStockValuation.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      document.getElementById('statTotalValuation').innerText = `SAR ${totalStockValuation.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
       document.getElementById('statLowStock').innerText = lowStockCount;
       document.getElementById('statExpSoon').innerText = expSoonCount;
       document.getElementById('statExpired').innerText = expiredCount;
@@ -928,7 +1001,7 @@
             </div>
             <div class="min-w-0">
               <h4 class="font-bold text-white text-sm truncate leading-tight">${item.name}</h4>
-              <div class="flex items-center gap-1.5 mt-1">
+              <div class="flex items-center gap-1.5 mt-1 flex-wrap">
                 <span class="text-[10px] font-mono px-1.5 py-0.5 rounded bg-slate-900 border border-slate-700 text-amber-300">
                   ${item.barcode || 'NO-SKU'}
                 </span>
@@ -953,10 +1026,10 @@
             <span class="text-[11px] text-slate-400 md:hidden font-semibold">${TRANSLATIONS[currentLang].col_price}:</span>
             <div>
               <div class="text-xs font-bold text-white font-mono">
-                Total: <span class="text-emerald-400">$${totalVal.toFixed(2)}</span>
+                Total: <span class="text-emerald-400 font-bold">SAR ${totalVal.toFixed(2)}</span>
               </div>
               <div class="text-[10px] text-slate-400 font-mono">
-                Unit: $${unitPrice.toFixed(2)} ${item.unitType === 'WEIGHT' ? '/kg' : ''}
+                Unit: SAR ${unitPrice.toFixed(2)} ${item.unitType === 'WEIGHT' ? '/kg' : ''}
               </div>
             </div>
           </div>
@@ -964,10 +1037,13 @@
           <div class="md:col-span-2 flex items-center justify-between md:justify-start">
             <span class="text-[11px] text-slate-400 md:hidden font-semibold">${TRANSLATIONS[currentLang].col_expiry}:</span>
             <div>
-              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full inline-block ${item.expInfo.badgeClass}">
+              <div class="text-xs font-bold text-slate-200 font-mono flex items-center gap-1">
+                <i class="fa-regular fa-calendar-days text-[11px] text-amber-400"></i>
+                <span>${item.expiryDate || 'N/A'}</span>
+              </div>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full inline-block mt-1 ${item.expInfo.badgeClass}">
                 ${item.expInfo.text}
               </span>
-              ${item.expiryDate ? `<span class="block text-[10px] text-slate-500 font-mono mt-0.5">${item.expiryDate}</span>` : ''}
             </div>
           </div>
 
@@ -978,10 +1054,10 @@
             <button onclick="openQuickAdjust('${item.key}', 'OUT')" title="Stock Out (-)" class="w-8 h-8 rounded-xl bg-rose-600/20 hover:bg-rose-600 text-rose-400 hover:text-white flex items-center justify-center text-xs font-bold transition-all">
               <i class="fa-solid fa-minus"></i>
             </button>
-            <button onclick="editProduct('${item.key}')" title="Edit Item" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-400 flex items-center justify-center text-xs transition-all">
+            <button onclick="editProduct('${item.key}')" title="Edit Batch" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-400 flex items-center justify-center text-xs transition-all">
               <i class="fa-solid fa-pen-to-square"></i>
             </button>
-            <button onclick="deleteProduct('${item.key}')" title="Delete Item" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-rose-600 hover:text-white text-slate-400 flex items-center justify-center text-xs transition-all">
+            <button onclick="deleteProduct('${item.key}')" title="Delete Batch" class="w-8 h-8 rounded-xl bg-slate-800 hover:bg-rose-600 hover:text-white text-slate-400 flex items-center justify-center text-xs transition-all">
               <i class="fa-solid fa-trash"></i>
             </button>
           </div>
@@ -992,8 +1068,8 @@
       emptyState.classList.toggle('hidden', filteredList.length > 0);
     }
 
-    // --- 9. PRODUCT MODAL HANDLERS ---
-    function openProductModal() {
+    // --- 9. PRODUCT MODAL HANDLERS (SEPARATE BATCHES FOR DIFFERENT EXPIRIES) ---
+    function openProductModal(prefillBarcode = '') {
       document.getElementById('productForm').reset();
       document.getElementById('editItemId').value = '';
       document.getElementById('modalHeading').innerHTML = `<i class="fa-solid fa-cake-candles text-amber-400"></i> ${TRANSLATIONS[currentLang].modal_add_title}`;
@@ -1001,7 +1077,14 @@
       document.getElementById('pUnitType').value = 'PIECE';
       document.getElementById('pPrice').value = '0';
       toggleUnitFields();
-      generateBarcode();
+
+      if (prefillBarcode) {
+        document.getElementById('pBarcode').value = prefillBarcode;
+        checkExistingBarcode(prefillBarcode);
+      } else {
+        generateBarcode();
+      }
+
       document.getElementById('productModal').classList.remove('hidden');
     }
 
@@ -1017,6 +1100,7 @@
       document.getElementById('modalHeading').innerHTML = `<i class="fa-solid fa-pen-to-square text-amber-400"></i> ${TRANSLATIONS[currentLang].modal_edit_title}`;
       document.getElementById('pName').value = item.name || '';
       document.getElementById('pCategory').value = item.category || '';
+      document.getElementById('pCategorySelect').value = item.category || '__NEW__';
       document.getElementById('pBarcode').value = item.barcode || '';
       document.getElementById('pUnitType').value = item.unitType || 'PIECE';
       document.getElementById('pPrice').value = item.price !== undefined ? item.price : 0;
@@ -1057,25 +1141,21 @@
       const expiryDate = document.getElementById('pExpiry').value;
       const imageFile = document.getElementById('pImageInput').files[0];
 
-      const normBarcode = barcode.toLowerCase();
-      const normName = name.toLowerCase();
+      if (!expiryDate) {
+        Swal.fire('মেয়াদ দিন!', 'প্রতিটি ব্যাচের নির্দিষ্ট মেয়াদ উত্তীর্ণের তারিখ আবশ্যক।', 'warning');
+        return;
+      }
 
+      const normBarcode = barcode.toLowerCase();
+
+      // DUPLICATE CHECK: Only block if BOTH Barcode AND Expiry Date match!
       for (const [key, item] of Object.entries(inventoryData)) {
         if (id && key === id) continue;
 
-        if (item.barcode && item.barcode.toLowerCase() === normBarcode) {
+        if (item.barcode && item.barcode.toLowerCase() === normBarcode && item.expiryDate === expiryDate) {
           Swal.fire({
-            title: TRANSLATIONS[currentLang].msg_duplicate_barcode,
-            html: `Barcode <b>"${barcode}"</b> is already assigned to <b>"${item.name}"</b>.`,
-            icon: 'warning'
-          });
-          return;
-        }
-
-        if (item.name && item.name.toLowerCase() === normName) {
-          Swal.fire({
-            title: TRANSLATIONS[currentLang].msg_duplicate_name,
-            html: `Product <b>"${item.name}"</b> already exists. Please update its stock or rename.`,
+            title: 'একই মেয়াদের ব্যাচ ইতিমধ্যে রয়েছে!',
+            html: `বারকোড: <b>"${barcode}"</b> এবং মেয়াদ: <b>"${expiryDate}"</b> দিয়ে ইতিমধ্যে একটি ব্যাচ আছে। অনুগ্রহ করে আলাদা মেয়াদ দিন বা স্টকে যোগ (+) করুন।`,
             icon: 'warning'
           });
           return;
@@ -1093,7 +1173,7 @@
 
       try {
         Swal.fire({
-          title: 'Saving...',
+          title: 'Saving Batch...',
           html: '<span class="text-xs text-slate-400">Uploading to ImgBB and syncing with RTDB...</span>',
           didOpen: () => Swal.showLoading(),
           allowOutsideClick: false
@@ -1101,8 +1181,12 @@
 
         let imageUrl = id && inventoryData[id] ? inventoryData[id].imageUrl : '';
 
+        // If no new image uploaded, check if image exists for same barcode
         if (imageFile) {
           imageUrl = await uploadToImgBB(imageFile);
+        } else if (!imageUrl) {
+          const sibling = Object.values(inventoryData).find(i => i.barcode && i.barcode.toLowerCase() === normBarcode && i.imageUrl);
+          if (sibling) imageUrl = sibling.imageUrl;
         }
 
         const productPayload = {
@@ -1138,8 +1222,8 @@
 
     function deleteProduct(key) {
       Swal.fire({
-        title: 'Delete Product',
-        text: 'Are you sure you want to permanently delete this item?',
+        title: 'Delete Batch',
+        text: 'Are you sure you want to delete this specific batch?',
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#e11d48',
@@ -1152,7 +1236,7 @@
       });
     }
 
-    // --- 10. QUICK ADJUSTMENT (+ / -) WITH ITEM PHOTO PREVIEW ---
+    // --- 10. QUICK ADJUSTMENT (+ / -) ---
     function openQuickAdjust(key, type = 'IN') {
       const item = inventoryData[key];
       if (!item) return;
@@ -1168,7 +1252,7 @@
           </div>
           <div class="min-w-0 flex-1">
             <h4 class="font-bold text-white text-sm truncate leading-tight">${item.name}</h4>
-            <div class="text-[11px] font-mono text-amber-400 mt-0.5">${item.barcode || 'NO-SKU'}</div>
+            <div class="text-[11px] font-mono text-amber-400 mt-0.5">Exp: <span class="text-white font-bold">${item.expiryDate || 'N/A'}</span></div>
             <div class="text-xs text-slate-400 mt-1">Current Stock: <span class="font-black text-emerald-400">${formatStockQuantity(item)}</span></div>
           </div>
         </div>
@@ -1222,7 +1306,7 @@
       let newQty = currentQAType === 'IN' ? currentQty + delta : currentQty - delta;
 
       if (newQty < 0) {
-        Swal.fire('Stock Shortage', 'Cannot deduct more than available in stock!', 'error');
+        Swal.fire('Stock Shortage', 'Cannot deduct more than available in this batch!', 'error');
         return;
       }
 
@@ -1242,10 +1326,73 @@
       });
     }
 
-    // --- 11. 100% BULLETPROOF ZERO-FREEZE BARCODE SCANNER ---
+    // --- 11. BATCH SELECTION MODAL LOGIC (FOR MULTIPLE EXPIRIES ON SAME BARCODE) ---
+    function openBatchSelectModal(barcode, matchingBatches) {
+      const container = document.getElementById('batchSelectListContainer');
+      const subTitle = document.getElementById('batchSelectSubTitle');
+      const firstItem = matchingBatches[0][1];
+
+      subTitle.innerHTML = `<span class="text-amber-400 font-bold">${firstItem.name}</span> &bull; Barcode: <span class="font-mono text-slate-300">${barcode}</span>`;
+      container.innerHTML = '';
+
+      matchingBatches.forEach(([key, item]) => {
+        const expInfo = getExpiryStatus(item.expiryDate);
+        const card = document.createElement('div');
+        card.className = "p-3 rounded-2xl bg-slate-900/90 border border-slate-800 flex items-center justify-between gap-3 hover:border-amber-500/40 transition-all";
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-bold text-white font-mono flex items-center gap-1.5">
+                <i class="fa-regular fa-calendar-days text-amber-400"></i>
+                <span>${item.expiryDate || 'No Expiry'}</span>
+              </span>
+              <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${expInfo.badgeClass}">${expInfo.text}</span>
+            </div>
+            <div class="text-xs text-slate-400 mt-1">
+              Stock: <span class="font-bold text-emerald-400">${formatStockQuantity(item)}</span> | Unit: SAR ${Number(item.price || 0).toFixed(2)}
+            </div>
+          </div>
+
+          <div class="flex items-center gap-1.5">
+            <button onclick="selectBatchForAdjust('${key}')" class="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl text-xs font-bold flex items-center gap-1 transition-all">
+              <i class="fa-solid fa-plus-minus"></i>
+              <span>স্টক +/-</span>
+            </button>
+            <button onclick="selectBatchForEdit('${key}')" class="p-2 bg-slate-800 hover:bg-amber-500 hover:text-slate-950 text-slate-300 rounded-xl text-xs transition-all">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+
+      document.getElementById('addNewBatchBtn').onclick = () => {
+        closeBatchSelectModal();
+        openProductModal(barcode);
+      };
+
+      document.getElementById('batchSelectModal').classList.remove('hidden');
+    }
+
+    function closeBatchSelectModal() {
+      document.getElementById('batchSelectModal').classList.add('hidden');
+    }
+
+    function selectBatchForAdjust(key) {
+      closeBatchSelectModal();
+      openQuickAdjust(key, 'IN');
+    }
+
+    function selectBatchForEdit(key) {
+      closeBatchSelectModal();
+      editProduct(key);
+    }
+
+    // --- 12. BARCODE SCANNER LOGIC ---
     function openGlobalScanner() {
       scannerMode = "GLOBAL";
-      document.getElementById('scannerInstruction').innerHTML = `<i class="fa-solid fa-barcode"></i> <span>Point camera at product to quickly adjust stock</span>`;
+      document.getElementById('scannerInstruction').innerHTML = `<i class="fa-solid fa-barcode"></i> <span>Point camera at product to adjust stock or pick batch</span>`;
       startScanner();
     }
 
@@ -1259,7 +1406,6 @@
       isProcessingScan = false;
       document.getElementById('scannerModal').classList.remove('hidden');
 
-      // Clear video container cleanly
       const readerElem = document.getElementById('scanner-reader');
       readerElem.innerHTML = '';
 
@@ -1271,32 +1417,24 @@
         config,
         onScanSuccess
       ).catch(err => {
-        console.error("Camera start error:", err);
+        console.error("Camera error:", err);
         Swal.fire('Camera Error', 'Could not access device camera. Please check camera permissions.', 'error');
         closeScannerModal();
       });
     }
 
-    // Instant stop that NEVER hangs UI
     function stopScannerImmediately() {
-      // 1. Hide modal synchronously (0 ms)
       document.getElementById('scannerModal').classList.add('hidden');
 
-      // 2. Kill hardware media streams instantly
       try {
         const video = document.querySelector('#scanner-reader video');
         if (video && video.srcObject) {
           const stream = video.srcObject;
-          stream.getTracks().forEach(track => {
-            track.stop();
-          });
+          stream.getTracks().forEach(track => track.stop());
           video.srcObject = null;
         }
-      } catch (e) {
-        console.warn("Media track kill:", e);
-      }
+      } catch (e) {}
 
-      // 3. Clean library instance in background without blocking
       if (activeScanner) {
         const scannerInstance = activeScanner;
         activeScanner = null;
@@ -1313,7 +1451,6 @@
     }
 
     function onScanSuccess(decodedText) {
-      // Prevent multiple scan triggers
       if (isProcessingScan) return;
       isProcessingScan = true;
 
@@ -1323,19 +1460,14 @@
         return;
       }
 
-      // Step 1: Immediate POS beep ("TOT" sound)
       playScanBeep();
-
-      // Step 2: Immediate hardware camera shutdown & modal close
       stopScannerImmediately();
 
-      // Step 3: Run target action immediately
       if (scannerMode === "MODAL_INPUT") {
-        // Scanned from within Add/Edit Item modal
         const barcodeInput = document.getElementById('pBarcode');
         if (barcodeInput) {
           barcodeInput.value = code;
-          barcodeInput.dispatchEvent(new Event('input', { bubbles: true }));
+          checkExistingBarcode(code);
         }
 
         Swal.fire({
@@ -1347,21 +1479,18 @@
           timer: 1500
         });
       } else {
-        // Global Scan mode: Search product in inventory
-        const foundEntry = Object.entries(inventoryData).find(([_, item]) => 
+        // GLOBAL SCANNER MODE: Find all batches for this barcode
+        const matchingBatches = Object.entries(inventoryData).filter(([_, item]) => 
           item && item.barcode && String(item.barcode).trim().toLowerCase() === code.toLowerCase()
         );
 
-        if (foundEntry) {
-          // Product found! Open Quick Adjust directly
-          openQuickAdjust(foundEntry[0], 'IN');
-        } else {
-          // Product NOT found! Clean alert
+        if (matchingBatches.length === 0) {
+          // No product found with this barcode
           Swal.fire({
             title: 'কোনো পণ্য পাওয়া যায়নি!',
             html: `
-              <div class="text-sm">বারকোড: <b class="text-amber-400 font-mono text-base">${code}</b> দিয়ে স্টকে কোনো পণ্য নেই।</div>
-              <p class="text-xs text-slate-400 mt-2.5">আপনি কি এই বারকোড দিয়ে নতুন পণ্য তৈরি করতে চান?</p>
+              <div class="text-sm">বারকোড: <b class="text-amber-400 font-mono text-base">${code}</b> দিয়ে কোনো ব্যাচ নিবন্ধিত নেই।</div>
+              <p class="text-xs text-slate-400 mt-2.5">আপনি কি এই বারকোড দিয়ে নতুন ব্যাচ তৈরি করতে চান?</p>
             `,
             icon: 'info',
             showCancelButton: true,
@@ -1371,10 +1500,15 @@
             cancelButtonText: 'বাতিল'
           }).then(res => {
             if (res.isConfirmed) {
-              openProductModal();
-              document.getElementById('pBarcode').value = code;
+              openProductModal(code);
             }
           });
+        } else if (matchingBatches.length === 1) {
+          // Exactly 1 batch found: open quick adjust
+          openQuickAdjust(matchingBatches[0][0], 'IN');
+        } else {
+          // Multiple batches with DIFFERENT EXPIRIES exist! Open Batch Selection Dialog!
+          openBatchSelectModal(code, matchingBatches);
         }
       }
     }
@@ -1383,7 +1517,7 @@
       stopScannerImmediately();
     }
 
-    // --- 12. PDF REPORT GENERATOR WITH VALUATIONS ---
+    // --- 13. PDF REPORT GENERATOR WITH VALUATIONS (SAR) ---
     function downloadFilteredPDF() {
       const filteredList = getFilteredItems();
 
@@ -1396,7 +1530,7 @@
       const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
 
       const monthVal = document.getElementById('filterMonth').value;
-      const monthTitle = monthVal ? `Month Filter: ${monthVal}` : 'Full Inventory Valuation Report';
+      const monthTitle = monthVal ? `Month Filter: ${monthVal}` : 'Full Inventory Valuation Report (SAR)';
 
       doc.setFillColor(15, 23, 42);
       doc.rect(0, 0, 210, 35, 'F');
@@ -1409,7 +1543,7 @@
       doc.setTextColor(255, 255, 255);
       doc.setFontSize(10);
       doc.setFont('helvetica', 'normal');
-      doc.text(`Official Inventory & Stock Valuation Report | ${monthTitle}`, 14, 23);
+      doc.text(`Official Inventory Stock Report (Currency: SAR) | ${monthTitle}`, 14, 23);
 
       doc.setTextColor(148, 163, 184);
       doc.setFontSize(8);
@@ -1432,8 +1566,8 @@
           item.category || 'Bakery',
           item.barcode || '-',
           qtyStr,
-          `$${unitPrice.toFixed(2)}`,
-          `$${totalVal.toFixed(2)}`,
+          `SAR ${unitPrice.toFixed(2)}`,
+          `SAR ${totalVal.toFixed(2)}`,
           expStr,
           statusStr
         ];
@@ -1441,7 +1575,7 @@
 
       doc.autoTable({
         startY: 38,
-        head: [['#', 'Product Name', 'Category', 'SKU/Barcode', 'Stock Qty', 'Unit Price', 'Total Value', 'Expiry', 'Status']],
+        head: [['#', 'Product Name', 'Category', 'SKU/Barcode', 'Stock Qty', 'Unit Price', 'Total (SAR)', 'Batch Expiry', 'Status']],
         body: tableData,
         theme: 'striped',
         headStyles: {
@@ -1465,9 +1599,9 @@
       doc.setTextColor(15, 23, 42);
       doc.setFontSize(10);
       doc.setFont('helvetica', 'bold');
-      doc.text(`Total Portfolio Valuation: $${grandTotalValue.toFixed(2)}`, 18, finalY + 8);
+      doc.text(`Total Portfolio Valuation: SAR ${grandTotalValue.toFixed(2)}`, 18, finalY + 8);
 
-      doc.save(`Lavesh_Inventory_${monthVal || 'All'}_${Date.now()}.pdf`);
+      doc.save(`Lavesh_Inventory_SAR_${monthVal || 'All'}_${Date.now()}.pdf`);
 
       Swal.fire({
         toast: true,
