@@ -120,31 +120,26 @@
 
       <!-- Action Items & Language Selector -->
       <div class="flex items-center gap-2 sm:gap-2.5">
-        <!-- History Audit Button -->
         <button onclick="openHistoryModal()" title="Stock Transaction History" class="px-3 py-2 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 border border-indigo-500/40 text-indigo-300 text-xs font-bold flex items-center gap-1.5 transition-all">
           <i class="fa-solid fa-clock-rotate-left"></i>
           <span class="hidden sm:inline" data-i18n="btn_history">হিস্ট্রি</span>
         </button>
 
-        <!-- PDF Export -->
         <button onclick="downloadFilteredPDF()" title="Download PDF Report" class="px-3 py-2 rounded-xl bg-rose-600/20 hover:bg-rose-600/30 border border-rose-500/40 text-rose-300 text-xs font-bold flex items-center gap-1.5 transition-all">
           <i class="fa-solid fa-file-pdf"></i>
           <span class="hidden md:inline" data-i18n="btn_pdf">Export PDF</span>
         </button>
 
-        <!-- Barcode Scanner -->
         <button onclick="openGlobalScanner()" title="Quick Barcode Scanner" class="px-3 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-400 text-xs font-bold flex items-center gap-1.5 transition-all">
           <i class="fa-solid fa-barcode"></i>
           <span class="hidden md:inline" data-i18n="btn_scanner">Scanner</span>
         </button>
 
-        <!-- New Item Button -->
         <button onclick="openProductModal()" class="px-3.5 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 text-xs font-black flex items-center gap-1.5 shadow-lg shadow-amber-500/20 transition-all">
           <i class="fa-solid fa-plus text-sm"></i>
           <span data-i18n="btn_add_item">New Item</span>
         </button>
 
-        <!-- Language Selector -->
         <div class="relative flex items-center bg-slate-900 border border-slate-700 rounded-xl px-2 py-1">
           <i class="fa-solid fa-globe text-amber-400 text-xs mr-1.5"></i>
           <select id="langSelect" onchange="changeLanguage(this.value)" class="bg-transparent text-xs text-white focus:outline-none font-semibold cursor-pointer">
@@ -154,7 +149,6 @@
           </select>
         </div>
 
-        <!-- Logout -->
         <button onclick="logout()" title="Logout" class="w-9 h-9 rounded-xl bg-slate-800 hover:bg-rose-600/20 hover:text-rose-400 border border-slate-700 flex items-center justify-center text-slate-400 transition-all">
           <i class="fa-solid fa-power-off text-xs"></i>
         </button>
@@ -322,7 +316,6 @@
           </div>
         </div>
 
-        <!-- Dynamic Weight Inputs -->
         <div id="weightFields" class="hidden p-3 rounded-2xl bg-slate-900/60 border border-amber-500/30 space-y-2">
           <div class="text-[11px] text-amber-400 font-medium flex items-center gap-1.5">
             <i class="fa-solid fa-scale-balanced"></i> Weight Mode (grams auto-convert to KG):
@@ -466,7 +459,7 @@
     </div>
   </div>
 
-  <!-- ================= SMART QUICK ADJUSTMENT MODAL WITH REFUND OPTION ================= -->
+  <!-- ================= UNIVERSAL QUICK ADJUSTMENT MODAL (ALL UNITS: PIECE, CARTON, BOX, KG, GRAMS) ================= -->
   <div id="quickAdjustModal" class="fixed inset-0 z-50 hidden flex items-center justify-center p-4 glass-modal">
     <div class="glass-panel w-full max-w-sm p-6 rounded-3xl border border-slate-700 shadow-2xl relative text-center">
       <div id="qaItemHeader" class="mb-4"></div>
@@ -484,25 +477,30 @@
         </button>
       </div>
 
-      <!-- Amount and Unit Input -->
+      <!-- Amount and Universal Unit Input -->
       <div class="space-y-3 mb-4 text-left">
         <div class="flex items-center justify-between text-xs text-slate-400">
-          <span id="qaUnitHint">পরিমাণ ও পরিমাপক একক দিন:</span>
+          <span id="qaUnitHint">পরিমাণ ও পরিমাপক একক বেছে নিন:</span>
         </div>
         <div class="grid grid-cols-2 gap-2">
           <div>
             <input type="number" id="qaAmount" step="any" placeholder="0" oninput="updateQALivePreview()" class="w-full px-3 py-2.5 text-center text-lg font-black bg-slate-900 border border-slate-700 rounded-xl text-white focus:outline-none focus:border-amber-500 font-mono" />
           </div>
           <div>
-            <select id="qaUnitSelect" onchange="updateQALivePreview()" class="w-full px-3 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs font-bold text-amber-400 focus:outline-none focus:border-amber-500 cursor-pointer">
-              <!-- Dynamically Populated -->
+            <!-- UNIVERSAL UNITS AVAILABLE FOR ALL PRODUCTS -->
+            <select id="qaUnitSelect" onchange="updateQALivePreview()" class="w-full px-2.5 py-2.5 bg-slate-900 border border-slate-700 rounded-xl text-xs font-bold text-amber-400 focus:outline-none focus:border-amber-500 cursor-pointer">
+              <option value="PIECE">পিস (Piece / Pcs)</option>
+              <option value="CARTON">কার্টুন (Carton)</option>
+              <option value="BOX">বক্স (Box / Pack)</option>
+              <option value="KG">কেজি (KG / كيلو)</option>
+              <option value="G">গ্রাম (Grams / غرام)</option>
             </select>
           </div>
         </div>
 
-        <!-- Optional Reason / Note for Adjustment / Refund -->
+        <!-- Optional Reason / Note -->
         <div>
-          <input type="text" id="qaReason" placeholder="কারণ বা বিবরণ (ঐচ্ছিক - e.g. কাস্টমার রিটার্ন)..." class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 placeholder-slate-500" />
+          <input type="text" id="qaReason" placeholder="কারণ বা বিবরণ (ঐচ্ছিক - e.g. কাস্টমার ফেরত)..." class="w-full px-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-xs text-white focus:outline-none focus:border-amber-500 placeholder-slate-500" />
         </div>
 
         <!-- Live Calculation Preview -->
@@ -550,9 +548,7 @@
       </div>
 
       <!-- History List Rows -->
-      <div class="flex-1 overflow-y-auto my-3 pr-1 space-y-2" id="historyListContainer">
-        <!-- Rendered by JS -->
-      </div>
+      <div class="flex-1 overflow-y-auto my-3 pr-1 space-y-2" id="historyListContainer"></div>
 
       <!-- History Footer -->
       <div class="pt-3 border-t border-slate-800 flex items-center justify-between flex-shrink-0 text-xs text-slate-400">
@@ -870,11 +866,9 @@
     }
 
     function listenToHistory() {
-      // Sync last 200 history logs in realtime
       db.ref('inventory_history').limitToLast(200).on('value', snapshot => {
         const data = snapshot.val() || {};
         historyLogs = Object.entries(data).map(([key, val]) => ({ id: key, ...val }));
-        // Sort newest first
         historyLogs.sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
         renderHistoryLogs();
       });
@@ -1405,7 +1399,7 @@
       });
     }
 
-    // --- 10. SMART MULTI-UNIT QUICK ADJUSTMENT (+ / - / REFUND) ---
+    // --- 10. UNIVERSAL QUICK ADJUSTMENT (+ / - / REFUND) FOR ALL PRODUCTS ---
     function openQuickAdjust(key, type = 'IN') {
       const item = inventoryData[key];
       if (!item) return;
@@ -1427,25 +1421,14 @@
         </div>
       `;
 
+      // Set default selected unit based on the item's original unit
       const unitSelect = document.getElementById('qaUnitSelect');
-      unitSelect.innerHTML = '';
-
       if (item.unitType === 'WEIGHT') {
-        unitSelect.innerHTML = `
-          <option value="KG">কেজি (KG)</option>
-          <option value="G">গ্রাম (Grams)</option>
-        `;
+        unitSelect.value = 'KG';
       } else if (item.unitType === 'CARTON') {
-        unitSelect.innerHTML = `
-          <option value="CARTON">কার্টুন (Carton)</option>
-          <option value="BOX">বক্স (Box)</option>
-          <option value="PIECE">পিস (Piece)</option>
-        `;
+        unitSelect.value = 'CARTON';
       } else {
-        unitSelect.innerHTML = `
-          <option value="PIECE">পিস (Piece)</option>
-          <option value="BOX">বক্স (Box)</option>
-        `;
+        unitSelect.value = 'PIECE';
       }
 
       document.getElementById('qaAmount').value = '';
@@ -1460,7 +1443,6 @@
       const subBtn = document.getElementById('qaTypeSub');
       const refBtn = document.getElementById('qaTypeRefund');
 
-      // Reset styles
       addBtn.className = "py-2 rounded-xl text-xs font-bold transition-all bg-slate-800 text-slate-400";
       subBtn.className = "py-2 rounded-xl text-xs font-bold transition-all bg-slate-800 text-slate-400";
       refBtn.className = "py-2 rounded-xl text-xs font-bold transition-all bg-slate-800 text-slate-400";
@@ -1475,14 +1457,31 @@
       updateQALivePreview();
     }
 
-    function calculateAdjustmentDelta(item, amount, selectedUnit) {
+    // Universal multi-unit calculation across all products
+    function calculateUniversalAdjustmentDelta(item, amount, selectedUnit) {
       if (item.unitType === 'WEIGHT') {
+        // Base is stored in Grams
         if (selectedUnit === 'KG') return amount * 1000;
+        if (selectedUnit === 'G') return amount;
+        if (selectedUnit === 'CARTON') return amount * 10000; // 1 carton = 10 KG
+        if (selectedUnit === 'BOX') return amount * 1000;      // 1 box = 1 KG
+        if (selectedUnit === 'PIECE') return amount * 1000;    // 1 piece/pack = 1 KG
         return amount;
       } else if (item.unitType === 'CARTON') {
+        // Base is stored in Cartons
         if (selectedUnit === 'CARTON') return amount;
+        if (selectedUnit === 'BOX') return amount / 10;        // 10 boxes = 1 carton
+        if (selectedUnit === 'PIECE') return amount / 24;      // 24 pieces = 1 carton
+        if (selectedUnit === 'KG') return amount / 10;         // 10 KG = 1 carton
+        if (selectedUnit === 'G') return amount / 10000;
         return amount;
       } else {
+        // Base is stored in Pieces (PIECE)
+        if (selectedUnit === 'PIECE') return amount;
+        if (selectedUnit === 'BOX') return amount * 12;        // 1 box = 12 pieces
+        if (selectedUnit === 'CARTON') return amount * 24;     // 1 carton = 24 pieces
+        if (selectedUnit === 'KG') return amount * 1;          // 1 KG equivalent = 1 large pack
+        if (selectedUnit === 'G') return amount / 1000;
         return amount;
       }
     }
@@ -1495,9 +1494,8 @@
       const selectedUnit = document.getElementById('qaUnitSelect').value;
       const displayElem = document.getElementById('qaNewStockDisplay');
 
-      const delta = calculateAdjustmentDelta(item, amount, selectedUnit);
+      const delta = calculateUniversalAdjustmentDelta(item, amount, selectedUnit);
       const currentQty = Number(item.quantity) || 0;
-      // In or Refund adds stock (+), Out decreases stock (-)
       let newQty = (currentQAType === 'IN' || currentQAType === 'REFUND') ? currentQty + delta : currentQty - delta;
 
       if (newQty < 0) {
@@ -1525,7 +1523,7 @@
       if (!item) return;
 
       const selectedUnit = document.getElementById('qaUnitSelect').value;
-      const delta = calculateAdjustmentDelta(item, amountInput, selectedUnit);
+      const delta = calculateUniversalAdjustmentDelta(item, amountInput, selectedUnit);
 
       const currentQty = Number(item.quantity) || 0;
       const isAddition = (currentQAType === 'IN' || currentQAType === 'REFUND');
@@ -1540,20 +1538,20 @@
       const newStockFormatted = formatStockQuantity({ ...item, quantity: newQty });
       const reasonNote = document.getElementById('qaReason').value.trim();
 
-      // Update inventory stock
+      // Update inventory stock in RTDB
       await db.ref(`inventory/${quickAdjustTargetId}`).update({
         quantity: newQty,
         updatedAt: firebase.database.ServerValue.TIMESTAMP
       });
 
-      // Record to inventory_history audit log in Firebase Realtime Database
+      // Save audit transaction to history
       const historyPayload = {
         itemId: quickAdjustTargetId,
         itemName: item.name || '',
         barcode: item.barcode || '',
         category: item.category || '',
         expiryDate: item.expiryDate || '',
-        action: currentQAType, // 'IN', 'OUT', or 'REFUND'
+        action: currentQAType,
         amount: amountInput,
         unit: selectedUnit,
         formattedChange: `${isAddition ? '+' : '-'}${amountInput} ${selectedUnit}`,
@@ -1571,7 +1569,7 @@
         toast: true,
         position: 'top-end',
         icon: 'success',
-        title: `${currentQAType === 'REFUND' ? 'রিফান্ড সম্পন্ন' : 'স্টক আপডেট'} এবং হিস্ট্রি সংরক্ষিত হয়েছে`,
+        title: `${currentQAType === 'REFUND' ? 'রিফান্ড সম্পন্ন' : 'স্টক আপডেট'} ও হিস্ট্রি সংরক্ষিত হয়েছে`,
         showConfirmButton: false,
         timer: 1800
       });
@@ -1642,12 +1640,10 @@
         const itemRow = document.createElement('div');
         itemRow.className = "p-3 rounded-2xl bg-slate-900 border border-slate-800 hover:border-slate-700 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs";
 
-        // Date and time formatting
         const dateObj = log.timestamp ? new Date(log.timestamp) : new Date();
         const dateStr = dateObj.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
         const timeStr = dateObj.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
 
-        // Badge styling
         let badgeHTML = '';
         if (log.action === 'IN') {
           badgeHTML = `<span class="px-2 py-0.5 rounded-full font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1"><i class="fa-solid fa-plus text-[10px]"></i> স্টক ইন</span>`;
